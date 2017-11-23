@@ -132,7 +132,7 @@ X_train, X_test, y_train, y_test = train_test_split(df_train[features], df_train
 
 #%% First fit
 pipeline = Pipeline([
-    ('classifier', GradientBoostingClassifier(loss = gini_loss,random_state = 42))
+    ('classifier', GradientBoostingClassifier(random_state = 42))
 ])
 
 print("Fitting")
