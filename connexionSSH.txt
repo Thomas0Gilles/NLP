@@ -1,0 +1,25 @@
+#### GIT
+
+Initialisation du repo cloner sur le repo
+git init
+git clone https://github.com/Maru92/Volley-2k15
+
+
+git pull  //Récupération des nouvelles MAJ
+
+git status     //permet de voir le status du git
+git add .     
+git commit -a
+
+git push    //Pusher les MAJ
+
+#### SSH
+
+//Charger des fichiers de son ordi vers le serveur
+scp monFichierInterne dsluser12@52.174.126.36:/Desktop/Kaggle1/
+
+//Se connecter au serveur
+ssh dsluser12@52.174.126.36
+mdp: 5cZ4wE
+
+
