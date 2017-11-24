@@ -22,4 +22,5 @@ scp monFichierInterne dsluser12@52.174.126.36:/Desktop/Kaggle1/
 ssh dsluser12@52.174.126.36
 mdp: 5cZ4wE
 
+logout    //Se déconnecter
 
