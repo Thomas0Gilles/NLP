@@ -7,7 +7,6 @@ from lightgbm import LGBMClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier, AdaBoostClassifier
 
-from rgf import *
 
 #%%
 train = pd.read_csv('../train.csv')

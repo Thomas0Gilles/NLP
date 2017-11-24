@@ -1,0 +1,2 @@
+NewMethod.py  ->   https://www.kaggle.com/arpitajena/top-200-on-lb-0-287-lgbm-avg-of-kernel-outputs
+NewMethod2.py  ->  https://www.kaggle.com/the1owl/forza-baseline

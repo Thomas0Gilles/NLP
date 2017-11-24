@@ -16,7 +16,8 @@ git push    //Pusher les MAJ
 #### SSH
 
 //Charger des fichiers de son ordi vers le serveur
-scp monFichierInterne dsluser12@52.174.126.36:/Desktop/Kaggle1/
+scp monFichierInterne dsluser12@52.174.126.36:~/Desktop/Kaggle1/
+sudo scp dsluser12@52.174.126.36:~/Desktop/Kaggle1/Volley-2k15/Newsub.csv /
 
 //Se connecter au serveur
 ssh dsluser12@52.174.126.36
