@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import cross_val_score
 
-from lightgbm import LGBMRegressor
+from lightgbm import LGBMClassifier
 from sklearn.linear_model import LogisticRegression
 
 #%%
@@ -20,6 +20,8 @@ def gini(actual, pred, cmpcol = 0, sortcol = 1):
 def gini_normalized(a, p):
     return gini(a, p) / gini(a, a)
 
+gini_score = make_scorer(gini_normalized,greater_is_better=True)
+gini_loss  = make_scorer(gini_normalized, greater_is_better=False)
 
 
 
@@ -138,18 +140,18 @@ lgb_params3['seed'] = 200
 
 #%%
 
-lgb_model = LGBMRegressor(**lgb_params)
+lgb_model = LGBMClassifier(**lgb_params)
 
-lgb_model2 = LGBMRegressor(**lgb_params2)
+lgb_model2 = LGBMClassifier(**lgb_params2)
 
-lgb_model3 = LGBMRegressor(**lgb_params3)
+lgb_model3 = LGBMClassifier(**lgb_params3)
 
 #%%
 log_model = LogisticRegression()
        
 stack = Ensemble(n_splits=6,
         stacker = log_model,
-        base_models = (lgb_model,lgb_model2,lgb_model3))        
+        base_models = (lgb_model))        
         
 y_pred = stack.fit_predict(train, target_train, test)
 sub_1 = pd.DataFrame()
@@ -158,5 +160,5 @@ sub_1['target'] = y_pred
 
 #%%
 
-sub_1.to_csv('LGBMRegressor.csv', index = False)
+sub_1.to_csv('PipeLGBM.csv', index = False)
 
