@@ -110,14 +110,14 @@ clf.fit(X_train, y_train)
 #refitting on entire training data using best settings
 clf.refit
 
-probs = clf.predict_proba(X_test)
+probs = clf.predict_proba(X_test)[:,1] 
 
 Gini_test = gini_normalized(y_test,probs)
 print("Refit, Gini normalized = ", Gini_test)
 
 
 #%%
-y_pred = clf.predict_proba(test)
+y_pred = clf.predict_proba(test)[:,1] 
 
 print(id_test.shape)
 print(y_pred.shape)
