@@ -83,17 +83,17 @@ class Ensemble(object):
 
                 print ("Fit %s fold %d" % (str(clf).split('(')[0], j+1))
                 clf.fit(X_train, y_train)
-                y_pred = clf.predict(X_holdout)[:,1]                
+                y_pred = clf.predict(X_holdout)                
 
                 S_train[test_idx, i] = y_pred
-                S_test_i[:, j] = clf.predict(T)[:,1]
+                S_test_i[:, j] = clf.predict(T)
             S_test[:, i] = S_test_i.mean(axis=1)
 
         results = cross_val_score(self.stacker, S_train, y, cv=3, scoring='roc_auc')
         print("Stacker score: %.5f" % (results.mean()))
 
         self.stacker.fit(S_train, y)
-        res = self.stacker.predict(S_test)[:,1]
+        res = self.stacker.predict(S_test)
         return res
 
 
