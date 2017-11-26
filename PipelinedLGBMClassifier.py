@@ -5,7 +5,28 @@ from sklearn.model_selection import cross_val_score
 
 from lightgbm import LGBMClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier, AdaBoostClassifier
+
+from sklearn.model_selection import GridSearchCV
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import make_scorer
+
+#%%
+
+def gini(actual, pred, cmpcol = 0, sortcol = 1):
+    all = np.asarray(np.c_[ actual, pred, np.arange(actual.shape[0]) ], dtype=np.float)
+    all = all[ np.lexsort((all[:,2], -1*all[:,1])) ]
+    totalLosses = all[:,0].sum()
+    giniSum = all[:,0].cumsum().sum() / totalLosses
+ 
+    giniSum -= (actual.shape[0] + 1) / 2.
+    return giniSum / actual.shape[0]
+    
+def gini_normalized(a, p):
+    return gini(a, p) / gini(a, a)
+
+gini_score = make_scorer(gini_normalized,greater_is_better=True)
+gini_loss  = make_scorer(gini_normalized, greater_is_better=False)
+
 
 
 #%%
@@ -134,10 +155,34 @@ log_model = LogisticRegression()
        
 stack = Ensemble(n_splits=6,
         stacker = log_model,
-        base_models = (lgb_model, lgb_model2, lgb_model3))        
+        base_models = (lgb_model))        
         
 y_pred = stack.fit_predict(train, target_train, test)        
 
+#%%
+
+pipeline = Pipeline([
+    ('classifier', stack)
+])
+    
+pipeline.fit_predict(train, target_train, test) 
+
+pipeline.get_params().keys()
+
+
+hyperparameters = { 'classifier__learning_rate': [0.02, 0.2],
+                    'classifier__n_estimators': [500,1100],
+                    'classifier__subsample':[0.7,0.8],
+                    'classifier__subsample_freq':[2,10],
+                    'classifier__colsample_bytree':[0.3,0.8],
+                    'classifier__feature_fraction':[0.9],
+                    'classifier__bagging_freq':[1],
+                    'classifier__verbose':[1]
+                  }
+clf = GridSearchCV(pipeline, hyperparameters, cv = 3, scoring = gini_score)
+ 
+
+#%%
 
 sub_1 = pd.DataFrame()
 sub_1['id'] = id_test
@@ -145,5 +190,5 @@ sub_1['target'] = y_pred
 
 #%%
 
-sub_1.to_csv('Newsub.csv', index = False)
+sub_1.to_csv('PipeLGBM.csv', index = False)
 
