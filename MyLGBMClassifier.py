@@ -142,10 +142,6 @@ lgb_params['subsample'] = 0.75
 lgb_params['subsample_freq'] = 2
 lgb_params['colsample_bytree'] = 0.9
 
-lgb_params3 = {}
-lgb_params['boosting_type'] = "goss"
-lgb_params['learning_rate'] = 0.02
-lgb_params['num_iterations'] = 1090
 
 
 #%%
@@ -154,14 +150,13 @@ lgb_model = LGBMClassifier(**lgb_params)
 
 lgb_model2 = LGBMClassifier(**lgb_params2)
 
-lgb_model3 = LGBMClassifier(**lgb_params3)
 
 #%%
 log_model = LogisticRegression()
        
-stack = Ensemble(n_splits=6,
+stack = Ensemble(n_splits=10,
         stacker = log_model,
-        base_models = (lgb_model, lgb_model2, lgb_model3))        
+        base_models = (lgb_model, lgb_model2))        
         
 y_pred = stack.fit_predict(train, target_train, test)        
 
