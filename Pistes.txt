@@ -1,6 +1,6 @@
 Travail en cours:
 -> GradientBoosting avec CVgridsearch
--> Pipeline LGBMClassifier
+-> gridsearch avec lightgbm sans method ensemble crée à la main
 -> LGMClassifier personnalisé avec des paramètres différents (dropout, ...)
 
 A faire:
@@ -9,7 +9,8 @@ A faire:
 
 
 Travail fini:
--> LGBMRegressor    => ECHEC CRITIQUE
+-> LGBMRegressor    => ECHEC CRITIQUE, mauvais résultat
+-> Pipeline LGBMClassifier    => Il faut qu'Ensemble implémente fit, sinon le pipeline pour Gridsearchcv ne marche pas
 
 Rk diverses:
 -Replace -1 par nan
@@ -21,3 +22,6 @@ Rk diverses:
 
 Commentaire NewMethod:
 -Pk drop les colonnes avec ps_calc_  ?
+
+LGBMClassifier.py  ->   https://www.kaggle.com/arpitajena/top-200-on-lb-0-287-lgbm-avg-of-kernel-outputs
+NewMethod2.py  ->  https://www.kaggle.com/the1owl/forza-baseline

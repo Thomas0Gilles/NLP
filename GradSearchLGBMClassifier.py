@@ -3,24 +3,9 @@ import pandas as pd
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import cross_val_score
 
-from lightgbm import LGBMRegressor
+from lightgbm import LGBMClassifier
 from sklearn.linear_model import LogisticRegression
-
-#%%
-
-def gini(actual, pred, cmpcol = 0, sortcol = 1):
-    all = np.asarray(np.c_[ actual, pred, np.arange(actual.shape[0]) ], dtype=np.float)
-    all = all[ np.lexsort((all[:,2], -1*all[:,1])) ]
-    totalLosses = all[:,0].sum()
-    giniSum = all[:,0].cumsum().sum() / totalLosses
- 
-    giniSum -= (actual.shape[0] + 1) / 2.
-    return giniSum / actual.shape[0]
-    
-def gini_normalized(a, p):
-    return gini(a, p) / gini(a, a)
-
-
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier, AdaBoostClassifier
 
 
 #%%
@@ -83,17 +68,17 @@ class Ensemble(object):
 
                 print ("Fit %s fold %d" % (str(clf).split('(')[0], j+1))
                 clf.fit(X_train, y_train)
-                y_pred = clf.predict(X_holdout)                
+                y_pred = clf.predict_proba(X_holdout)[:,1]                
 
                 S_train[test_idx, i] = y_pred
-                S_test_i[:, j] = clf.predict(T)
+                S_test_i[:, j] = clf.predict_proba(T)[:,1]
             S_test[:, i] = S_test_i.mean(axis=1)
 
         results = cross_val_score(self.stacker, S_train, y, cv=3, scoring='roc_auc')
         print("Stacker score: %.5f" % (results.mean()))
 
         self.stacker.fit(S_train, y)
-        res = self.stacker.predict(S_test)
+        res = self.stacker.predict_proba(S_test)[:,1]
         return res
 
 
@@ -138,25 +123,27 @@ lgb_params3['seed'] = 200
 
 #%%
 
-lgb_model = LGBMRegressor(**lgb_params)
+lgb_model = LGBMClassifier(**lgb_params)
 
-lgb_model2 = LGBMRegressor(**lgb_params2)
+lgb_model2 = LGBMClassifier(**lgb_params2)
 
-lgb_model3 = LGBMRegressor(**lgb_params3)
+lgb_model3 = LGBMClassifier(**lgb_params3)
 
 #%%
 log_model = LogisticRegression()
        
 stack = Ensemble(n_splits=6,
         stacker = log_model,
-        base_models = (lgb_model,lgb_model2,lgb_model3))        
+        base_models = (lgb_model, lgb_model2, lgb_model3))        
         
-y_pred = stack.fit_predict(train, target_train, test)
+y_pred = stack.fit_predict(train, target_train, test)        
+
+
 sub_1 = pd.DataFrame()
 sub_1['id'] = id_test
 sub_1['target'] = y_pred
 
 #%%
 
-sub_1.to_csv('LGBMRegressor.csv', index = False)
+sub_1.to_csv('Newsub.csv', index = False)
 
