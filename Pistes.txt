@@ -1,5 +1,4 @@
 Travail en cours:
--> GradientBoosting avec CVgridsearch
 -> gridsearch avec lightgbm sans method ensemble crée à la main
 -> LGMClassifier personnalisé avec des paramètres différents (dropout, ...)
 
@@ -7,10 +6,13 @@ A faire:
 -> Enlever les colonnes ou il y a trop de monde
 -> Rajouter les colonnes drop ps_calc_
 
-
 Travail fini:
--> LGBMRegressor    => ECHEC CRITIQUE, mauvais résultat
--> Pipeline LGBMClassifier    => Il faut qu'Ensemble implémente fit, sinon le pipeline pour Gridsearchcv ne marche pas
+-> LGBMRegressor    => SCORE ECHEC CRITIQUE, mauvais résultat
+-> Pipeline LGBMClassifier    => IMPLEMENTATION ECHEC CRITIQUE, Il faut qu'Ensemble implémente fit, sinon le pipeline pour Gridsearchcv ne marche pas
+-> ImproveGradientBoosting avec CVgridsearch  => RUN TIME ECHEC CRITIQUE, trop long car cela ne doit pas etre optimisé (autant travaillé avec lightgbm)
+
+
+
 
 Rk diverses:
 -Replace -1 par nan

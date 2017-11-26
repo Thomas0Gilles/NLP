@@ -91,7 +91,8 @@ hyperparameters = { 'classifier__learning_rate': [0.02, 0.2],
                     'classifier__num_iterations': [100,650,1100],
                     'classifier__subsample': [0.7,0.9],
                     'classifier__subsample_freq': [1,10],
-                    'classifier__colsample_bytree': [0.7,0.9]
+                    'classifier__colsample_bytree': [0.7,0.9],
+                    'classifier__silent': [False]
                   }
 clf = GridSearchCV(pipeline, hyperparameters, cv = 3, scoring = gini_score)
  
