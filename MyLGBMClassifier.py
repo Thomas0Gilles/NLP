@@ -20,9 +20,9 @@ target_train = train['target'].values
 train = train.drop(['target','id'], axis = 1)
 test = test.drop(['id'], axis = 1)
 
-col_to_drop = train.columns[train.columns.str.startswith('ps_calc_')]
-train = train.drop(col_to_drop, axis=1)  
-test = test.drop(col_to_drop, axis=1)  
+#col_to_drop = train.columns[train.columns.str.startswith('ps_calc_')]
+#train = train.drop(col_to_drop, axis=1)  
+#test = test.drop(col_to_drop, axis=1)  
 
 train = train.replace(-1, np.nan)
 test = test.replace(-1, np.nan)
@@ -90,37 +90,71 @@ class Ensemble(object):
 # http://lightgbm.readthedocs.io/en/latest/Parameters.html#objective-parameters
 #==============================================================================
 
-
-
 lgb_params = {}
-lgb_params['boosting_type'] = "gbdt"   #"dart","goss","rf"
+lgb_params['learning_rate'] = 0.02
+lgb_params['n_estimators'] = 650
+lgb_params['max_bin'] = 10
+lgb_params['subsample'] = 0.8
+lgb_params['subsample_freq'] = 10
+lgb_params['colsample_bytree'] = 0.8   
+lgb_params['min_child_samples'] = 500
+lgb_params['feature_fraction'] = 0.9
+lgb_params['num_iterations']=900
+lgb_params['bagging_freq'] = 1
+lgb_params['seed'] = 200
+
+lgb_params2 = {}
+lgb_params2['n_estimators'] = 1090
+lgb_params2['learning_rate'] = 0.02
+lgb_params2['colsample_bytree'] = 0.3   
+lgb_params2['subsample'] = 0.7
+lgb_params2['subsample_freq'] = 2
+lgb_params2['num_leaves'] = 16
+lgb_params2['num_iterations']=900
+lgb_params2['feature_fraction'] = 0.9
+lgb_params2['bagging_freq'] = 1
+lgb_params2['seed'] = 200
+
+
+lgb_params3 = {}
+lgb_params3['n_estimators'] = 1100
+lgb_params3['max_depth'] = 4
+lgb_params3['num_iterations']=900
+lgb_params3['learning_rate'] = 0.02
+lgb_params3['feature_fraction'] = 0.9
+lgb_params3['bagging_freq'] = 1
+lgb_params3['seed'] = 200
+
+
+#lgb_params = {}
+#lgb_params['boosting_type'] = "gbdt"   #"dart","goss","rf"
 # lgb_params['num_leaves'] = 31
 # lgb_params['max_depth'] = -1
-lgb_params['learning_rate'] = 0.02
-lgb_params['num_iterations'] = 1090       #apparemment quand il trouve num_iterations il l'utilise au lieu de n_estimators
+#lgb_params['learning_rate'] = 0.02
+#lgb_params['num_iterations'] = 1090       #apparemment quand il trouve num_iterations il l'utilise au lieu de n_estimators
 # lgb_params['min_child_weight'] = 1e-3
 # lgb_params['min_child_samples'] = 20
-lgb_params['subsample'] = 0.9
-lgb_params['subsample_freq'] = 1
-lgb_params['colsample_bytree'] = 0.9
+#lgb_params['subsample'] = 0.9
+#lgb_params['subsample_freq'] = 1
+#lgb_params['colsample_bytree'] = 0.9
 #lgb_params['random_state'] = 200
 #lgb_params['silent'] = False
 
-lgb_params2 = {}
-lgb_params2['boosting_type'] = "gbdt"
-lgb_params2['learning_rate'] = 0.1
-lgb_params2['num_iterations'] = 1000
-lgb_params2['subsample'] = 0.8
-lgb_params2['subsample_freq'] = 5
-lgb_params2['colsample_bytree'] = 0.8
+#lgb_params2 = {}
+#lgb_params2['boosting_type'] = "gbdt"
+#lgb_params2['learning_rate'] = 0.1
+#lgb_params2['num_iterations'] = 1000
+#lgb_params2['subsample'] = 0.8
+#lgb_params2['subsample_freq'] = 5
+#lgb_params2['colsample_bytree'] = 0.8
 
-lgb_params3 = {}
-lgb_params3['boosting_type'] = "gbdt"
-lgb_params3['learning_rate'] = 0.05
-lgb_params3['num_iterations'] = 1000
-lgb_params3['subsample'] = 0.7
-lgb_params3['subsample_freq'] = 10
-lgb_params3['colsample_bytree'] = 0.7
+#lgb_params3 = {}
+#lgb_params3['boosting_type'] = "gbdt"
+#lgb_params3['learning_rate'] = 0.05
+#lgb_params3['num_iterations'] = 1000
+#lgb_params3['subsample'] = 0.7
+#lgb_params3['subsample_freq'] = 10
+#lgb_params3['colsample_bytree'] = 0.7
 
 
 #%%
