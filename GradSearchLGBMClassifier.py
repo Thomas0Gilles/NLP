@@ -66,7 +66,7 @@ X_train, X_test, y_train, y_test = train_test_split(train, target_train, test_si
 # LightGBM params
 lgb_params = {}
 lgb_params['learning_rate'] = 0.02
-lgb_params['num_iterations'] = 1000
+lgb_params['num_iterations'] = 10
 lgb_params['subsample'] = 0.8
 lgb_params['subsample_freq'] = 1
 lgb_params['colsample_bytree'] = 0.8   
@@ -87,7 +87,7 @@ print("Fitting")
 pipeline.get_params().keys()
 
 hyperparameters = { 'classifier__learning_rate': [0.02, 0.2],
-                    'classifier__num_iterations': [1100],
+                    'classifier__num_iterations': [11],
                     'classifier__subsample': [0.7],
                     'classifier__subsample_freq': [1],
                     'classifier__colsample_bytree': [0.7],
@@ -102,6 +102,7 @@ hyperparameters = { 'classifier__learning_rate': [0.02, 0.2],
 #                    'classifier__silent': [False]
 #                  }
 clf = GridSearchCV(pipeline, hyperparameters, cv = 3, scoring = gini_score)
+
  
 # Fit and tune model
 clf.fit(X_train, y_train)
@@ -117,6 +118,9 @@ print("Refit, Gini normalized = ", Gini_test)
 
 #%%
 y_pred = clf.predict_proba(test)
+
+print(id_test.shape)
+print(y_pred.shape)
 
 sub_1 = pd.DataFrame()
 sub_1['id'] = id_test
