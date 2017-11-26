@@ -93,34 +93,44 @@ class Ensemble(object):
 
 
 lgb_params = {}
-lgb_params['boosting_type'] = "gbdt"   #"dart","goss","rf"
+lgb_params['boosting_type'] = "dart"   #"dart","goss","rf"
 # lgb_params['num_leaves'] = 31
 # lgb_params['max_depth'] = -1
 lgb_params['learning_rate'] = 0.02
 lgb_params['num_iterations'] = 1090       #apparemment quand il trouve num_iterations il l'utilise au lieu de n_estimators
 # lgb_params['min_child_weight'] = 1e-3
 # lgb_params['min_child_samples'] = 20
-lgb_params['subsample'] = 0.9
+lgb_params['subsample'] = 0.75
 lgb_params['subsample_freq'] = 1
 lgb_params['colsample_bytree'] = 0.9
 #lgb_params['random_state'] = 200
 #lgb_params['silent'] = False
+lgb_params['xgboost_dart_mode'] = False
+
+##Other parameter with dart
 
 lgb_params2 = {}
-lgb_params2['boosting_type'] = "gbdt"
-lgb_params2['learning_rate'] = 0.1
-lgb_params2['num_iterations'] = 1000
-lgb_params2['subsample'] = 0.8
-lgb_params2['subsample_freq'] = 5
-lgb_params2['colsample_bytree'] = 0.8
+lgb_params2['boosting_type'] = "dart"
+lgb_params2['learning_rate'] = 0.02
+lgb_params2['num_iterations'] = 1090  
+lgb_params2['subsample'] = 0.75
+lgb_params2['subsample_freq'] = 1
+lgb_params2['colsample_bytree'] = 0.9
+#lgb_params2['drop_rate'] = 0.1
+#lgb_params2['skip_drop'] = 0.5
+#lgb_params2['max_drop'] = 50
+lgb_params2['xgboost_dart_mode'] = True
+
 
 lgb_params3 = {}
-lgb_params3['boosting_type'] = "gbdt"
+lgb_params3['boosting_type'] = "dart"
 lgb_params3['learning_rate'] = 0.05
-lgb_params3['num_iterations'] = 1000
-lgb_params3['subsample'] = 0.7
-lgb_params3['subsample_freq'] = 10
-lgb_params3['colsample_bytree'] = 0.7
+lgb_params3['num_iterations'] = 600
+lgb_params3['subsample'] = 0.9
+lgb_params3['subsample_freq'] = 1
+lgb_params3['colsample_bytree'] = 0.9
+lgb_params3['drop_rate'] = 0.2
+#lgb_params3['skip_drop'] = 0.75
 
 
 #%%
@@ -135,9 +145,9 @@ lgb_model3 = LGBMClassifier(**lgb_params3)
 #%%
 log_model = LogisticRegression()
        
-stack = Ensemble(n_splits=10,
+stack = Ensemble(n_splits=6,
         stacker = log_model,
-        base_models = (lgb_model, lgb_model2))        
+        base_models = (lgb_model, lgb_model2, lgb_model3))        
         
 y_pred = stack.fit_predict(train, target_train, test)        
 
@@ -148,5 +158,5 @@ sub_1['target'] = y_pred
 
 #%%
 
-sub_1.to_csv('MyLGBM.csv', index = False)
+sub_1.to_csv('DartLGBM.csv', index = False)
 

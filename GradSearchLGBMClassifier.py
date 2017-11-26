@@ -87,21 +87,13 @@ print("Fitting")
 pipeline.get_params().keys()
 
 hyperparameters = { 'classifier__learning_rate': [0.02, 0.2],
-                    'classifier__num_iterations': [11],
-                    'classifier__subsample': [0.7],
-                    'classifier__subsample_freq': [1],
-                    'classifier__colsample_bytree': [0.7],
+                    'classifier__num_iterations': [100,650,1100],
+                    'classifier__subsample': [0.7,0.9],
+                    'classifier__subsample_freq': [1,10],
+                    'classifier__colsample_bytree': [0.7,0.9],
                     'classifier__silent': [False]
                   }
-
-#hyperparameters = { 'classifier__learning_rate': [0.02, 0.2],
-#                    'classifier__num_iterations': [100,650,1100],
-#                    'classifier__subsample': [0.7,0.9],
-#                    'classifier__subsample_freq': [1,10],
-#                    'classifier__colsample_bytree': [0.7,0.9],
-#                    'classifier__silent': [False]
-#                  }
-clf = GridSearchCV(pipeline, hyperparameters, cv = 3, scoring = gini_score)
+clf = GridSearchCV(pipeline, hyperparameters, cv = 5, scoring = gini_score)
 
  
 # Fit and tune model
