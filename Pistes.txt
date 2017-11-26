@@ -1,0 +1,10 @@
+Rk diverses:
+-Replace -1 par nan
+-Essayer de drop les colonnes ou il y a beaucoup de -1
+-Essayer d'autres method de lightgbm  (http://lightgbm.readthedocs.io/en/latest/Python-API.html#lightgbm.LGBMClassifier)
+	--CV
+	--LGBMRegressor
+	--LGBMRanker
+
+Commentaire NewMethod:
+-Pk drop les colonnes avec ps_calc_  ?
