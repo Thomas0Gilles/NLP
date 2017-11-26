@@ -87,36 +87,10 @@ class Ensemble(object):
 
 # LightGBM params
 #==============================================================================
-# lgb_params = {}
-# lgb_params['learning_rate'] = 0.02
-# lgb_params['n_estimators'] = 650
-# lgb_params['max_bin'] = 10
-# lgb_params['subsample'] = 0.8
-# lgb_params['subsample_freq'] = 10 
-# lgb_params['min_child_samples'] = 500
-# lgb_params['feature_fraction'] = 0.9
-# lgb_params['bagging_freq'] = 1
-# lgb_params['seed'] = 200
-# 
-# lgb_params2 = {}
-# lgb_params2['n_estimators'] = 1090
-# lgb_params2['learning_rate'] = 0.02 
-# lgb_params2['subsample'] = 0.7
-# lgb_params2['subsample_freq'] = 2
-# lgb_params2['num_leaves'] = 16
-# lgb_params2['feature_fraction'] = 0.9
-# lgb_params2['bagging_freq'] = 1
-# lgb_params2['seed'] = 200
-# 
-# 
-# lgb_params3 = {}
-# lgb_params3['n_estimators'] = 1100
-# lgb_params3['max_depth'] = 4
-# lgb_params3['learning_rate'] = 0.02
-# lgb_params3['feature_fraction'] = 0.9
-# lgb_params3['bagging_freq'] = 1
-# lgb_params3['seed'] = 200
+# http://lightgbm.readthedocs.io/en/latest/Parameters.html#objective-parameters
 #==============================================================================
+
+
 
 lgb_params = {}
 lgb_params['boosting_type'] = "gbdt"   #"dart","goss","rf"

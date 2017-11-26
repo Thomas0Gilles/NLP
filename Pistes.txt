@@ -1,10 +1,24 @@
 Travail en cours:
--> gridsearch avec lightgbm sans method ensemble crée à la main
--> LGMClassifier personnalisé avec des paramètres différents (dropout, ...)
+
+-> gridsearch avec lightgbm sans method ensemble créé à la main
+
+-> LGMClassifier personnalisé avec des paramètres différents (dropout, ...)  (RK: la foncion dart met un temps monstrueux, la tester a coté)
 
 A faire:
 -> Enlever les colonnes ou il y a trop de monde
 -> Rajouter les colonnes drop ps_calc_
+
+Erreurs recontrées:
+Sur GradSearch a la main avec lightgbm
+  File "/anaconda/envs/py35/lib/python3.5/site-packages/pandas/core/internals.py", line 3666, in set
+    loc = self.items.get_loc(item)
+  File "/anaconda/envs/py35/lib/python3.5/site-packages/pandas/indexes/base.py", line 2136, in get_loc
+    return self._engine.get_loc(self._maybe_cast_indexer(key))
+  File "pandas/index.pyx", line 139, in pandas.index.IndexEngine.get_loc (pandas/index.c:4443)
+  File "pandas/index.pyx", line 161, in pandas.index.IndexEngine.get_loc (pandas/index.c:4289)
+  File "pandas/src/hashtable_class_helper.pxi", line 732, in pandas.hashtable.PyObjectHashTable.get_item (pandas/hashtable.c:13733)
+  File "pandas/src/hashtable_class_helper.pxi", line 740, in pandas.hashtable.PyObjectHashTable.get_item (pandas/hashtable.c:13687)
+
 
 Travail fini:
 -> LGBMRegressor    => SCORE ECHEC CRITIQUE, mauvais résultat
