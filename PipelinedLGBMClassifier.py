@@ -5,6 +5,7 @@ from sklearn.model_selection import cross_val_score
 
 from lightgbm import LGBMClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import make_scorer
 
 #%%
 
