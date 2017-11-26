@@ -146,9 +146,6 @@ lgb_params3 = {}
 lgb_params['boosting_type'] = "goss"
 lgb_params['learning_rate'] = 0.02
 lgb_params['num_iterations'] = 1090
-lgb_params['subsample'] = 0.75
-lgb_params['subsample_freq'] = 2
-lgb_params['colsample_bytree'] = 0.9
 
 
 #%%
