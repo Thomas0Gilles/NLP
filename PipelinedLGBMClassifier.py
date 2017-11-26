@@ -5,6 +5,9 @@ from sklearn.model_selection import cross_val_score
 
 from lightgbm import LGBMClassifier
 from sklearn.linear_model import LogisticRegression
+
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import make_scorer
 
 #%%
@@ -155,6 +158,34 @@ stack = Ensemble(n_splits=6,
         base_models = (lgb_model,lgb_model2,lgb_model3))        
         
 y_pred = stack.fit_predict(train, target_train, test)
+
+pipeline = Pipeline([
+    ('classifier', stack)
+])
+print("Fitting")
+
+pipeline.fit_predict(train, target_train, test)
+
+pipeline.get_params().keys()
+
+
+hyperparameters = { 'classifier__learning_rate': [0.1],
+                    'classifier__n_estimators': [1000,500],
+                    'classifier__max_depth': [2, 4],
+                    'classifier__min_samples_leaf': [2, 5],
+                    'classifier__verbose':[1]
+                  }
+clf = GridSearchCV(pipeline, hyperparameters, cv = 3, scoring = gini_score)
+ 
+# Fit and tune model
+clf.fit_predict(train, target_train, test)
+
+#refitting on entire training data using best settings
+clf.refit
+
+preds = clf.predict(test)
+probs = clf.predict_proba(test)
+
 sub_1 = pd.DataFrame()
 sub_1['id'] = id_test
 sub_1['target'] = y_pred

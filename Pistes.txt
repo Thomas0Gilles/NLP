@@ -1,3 +1,13 @@
+Travail en cours:
+-> GradientBoosting avec CVgridsearch
+-> Pipeline LGBMClassifier
+-> LGBMRegressor
+-> LGMClassifier personnalisé avec des paramètres différents (dropout, ...)
+
+A faire:
+-> Enlever les colonnes ou il y a trop de monde
+-> Rajouter les colonnes drop ps_calc_
+
 Rk diverses:
 -Replace -1 par nan
 -Essayer de drop les colonnes ou il y a beaucoup de -1
