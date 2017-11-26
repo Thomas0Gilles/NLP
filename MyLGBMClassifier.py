@@ -123,7 +123,7 @@ lgb_params['boosting_type'] = "gbdt"   #"dart","goss","rf"
 # lgb_params['num_leaves'] = 31
 # lgb_params['max_depth'] = -1
 lgb_params['learning_rate'] = 0.02
-lgb_params['n_estimators'] = 1090
+lgb_params['num_iterations'] = 1090       #apparemment quand il trouve num_iterations il l'utilise au lieu de n_estimators
 # lgb_params['min_child_weight'] = 1e-3
 # lgb_params['min_child_samples'] = 20
 lgb_params['subsample'] = 0.75
@@ -136,31 +136,19 @@ lgb_params['colsample_bytree'] = 0.9
 
 lgb_params2 = {}
 lgb_params['boosting_type'] = "dart"
-# lgb_params['num_leaves'] = 31
-# lgb_params['max_depth'] = -1
 lgb_params['learning_rate'] = 0.02
-lgb_params['n_estimators'] = 1090
-# lgb_params['min_child_weight'] = 1e-3
-# lgb_params['min_child_samples'] = 20
+lgb_params['num_iterations'] = 1090  
 lgb_params['subsample'] = 0.75
 lgb_params['subsample_freq'] = 2
 lgb_params['colsample_bytree'] = 0.9
-#lgb_params['random_state'] = 200
-#lgb_params['silent'] = False
 
 lgb_params3 = {}
 lgb_params['boosting_type'] = "goss"
-# lgb_params['num_leaves'] = 31
-# lgb_params['max_depth'] = -1
 lgb_params['learning_rate'] = 0.02
-lgb_params['n_estimators'] = 1090
-# lgb_params['min_child_weight'] = 1e-3
-# lgb_params['min_child_samples'] = 20
+lgb_params['num_iterations'] = 1090
 lgb_params['subsample'] = 0.75
 lgb_params['subsample_freq'] = 2
 lgb_params['colsample_bytree'] = 0.9
-#lgb_params['random_state'] = 200
-#lgb_params['silent'] = False
 
 
 #%%
