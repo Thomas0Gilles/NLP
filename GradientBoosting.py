@@ -39,28 +39,6 @@ gini_loss  = make_scorer(gini_normalized, greater_is_better=False)
 
 #%% Scission des variables catégoriques
 
-col_to_drop = train.columns[train.columns.str.startswith('ps_calc_')]
-train = train.drop(col_to_drop, axis=1)  
-test = test.drop(col_to_drop, axis=1)  
-
-train = train.replace(-1, np.nan)
-test = test.replace(-1, np.nan)
-
-cat_features = [a for a in train.columns if a.endswith('cat')]
-
-for column in cat_features:
-	temp = pd.get_dummies(pd.Series(train[column]))
-	train = pd.concat([train,temp],axis=1)
-	train = train.drop([column],axis=1)
-    
-for column in cat_features:
-	temp = pd.get_dummies(pd.Series(test[column]))
-	test = pd.concat([test,temp],axis=1)
-	test = test.drop([column],axis=1)
-
-print(train.values.shape, test.values.shape)
-
-
 #Supposition: de 0 à p pour variable catégorique (p+1 different feature). NB: -1 est une valeur qui n'apparait jamais
 #Première version où je delete la variable -1 dans les catégoriels: elle ne prendra juste pas de valeurs (sum!=1)
 variables = df_train.columns.values

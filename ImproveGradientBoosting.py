@@ -48,8 +48,8 @@ col_to_drop = train.columns[train.columns.str.startswith('ps_calc_')]
 train = train.drop(col_to_drop, axis=1)  
 test = test.drop(col_to_drop, axis=1)  
 
-train = train.replace(-1, np.nan)
-test = test.replace(-1, np.nan)
+#train = train.replace(-1, np.nan)
+#test = test.replace(-1, np.nan)
 
 cat_features = [a for a in train.columns if a.endswith('cat')]
 
