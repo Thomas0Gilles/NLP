@@ -173,7 +173,7 @@ log_model = LogisticRegression()  #Simple, quick, efficient without tuning
 #log_model = AdaBoostClassifier()
 
       
-stack = Ensemble(n_splits=10,
+stack = Ensemble(n_splits=6,
         stacker = log_model,
         base_models = (lgb_model, lgb_model2))        
         
@@ -184,21 +184,6 @@ sub_1 = pd.DataFrame()
 sub_1['id'] = id_test
 sub_1['target'] = y_pred
 
-#%%
-# Ensembling from different best submissions
-
-sub_2 = pd.read_csv('../Submissions/LGBMClassifier.csv')
-sub_3 = pd.read_csv('../Submissions/MyLGBM2.csv')
-sub_4 = pd.read_csv('../Submissions/MyLGBM1.csv')
-sub_5 = pd.read_csv('../Submissions/blend1.csv')
-sub_6 = pd.read_csv('../Submissions/DartLGBM.csv')
-sub_7 = pd.read_csv('../Submissions/MyLGBM3.csv')
-sub_8 = pd.read_csv('../Submissions/MyLGBM_gini_.csv')
-
-sub = pd.DataFrame()
-sub['id'] = id_test
-sub['target'] = np.exp(np.mean([sub_1['target'].apply(lambda x: np.log(x)), sub_2['target'].apply(lambda x: np.log(x)), sub_3['target'].apply(lambda x: np.log(x)), sub_4['target'].apply(lambda x: np.log(x)), sub_5['target'].apply(lambda x: np.log(x)), sub_6['target'].apply(lambda x: np.log(x)), sub_7['target'].apply(lambda x: np.log(x)), sub_8['target'].apply(lambda x: np.log(x))], axis =0))
-
-sub.to_csv('sub_ensemble.csv', index = False)
+sub_1.to_csv('MyLGBM4.csv', index = False)
 
 
