@@ -66,29 +66,29 @@ print("Fitting")
 
 pipeline.get_params().keys()
 
-hyperparameters = { 'classifier__learning_rate': [0.02, 0.2],
-                    'classifier__num_iterations': [100,650,1100],
-                    'classifier__subsample': [0.7,0.9],
-                    'classifier__subsample_freq': [1,10],
-                    'classifier__colsample_bytree': [0.7,0.9],
-                    'classifier__silent': [False],
-                    'classifier__seed': [200],
-                    'classifier__num_leaves': [16,31],
-                    'classifier__max_depth': [-1, 4, 10],
-                    'classifier__max_bin': [10, 100, 255]
-                  }
-
-#hyperparameters = { 'classifier__learning_rate': [0.01, 0.1],
-#                    'classifier__num_iterations': [500,800,1300],
-#                    'classifier__subsample': [0.80,0.95],
-#                    'classifier__subsample_freq': [1,3,5],
-#                    'classifier__colsample_bytree': [0.80,0.95],
+#hyperparameters = { 'classifier__learning_rate': [0.02, 0.2],
+#                    'classifier__num_iterations': [100,650,1100],
+#                    'classifier__subsample': [0.7,0.9],
+#                    'classifier__subsample_freq': [1,10],
+#                    'classifier__colsample_bytree': [0.7,0.9],
 #                    'classifier__silent': [False],
-#                    'classifier__seed': [500],
-#                    'classifier__num_leaves': [8,23,31],
-#                    'classifier__max_depth': [-1, 2, 7],
-#                    'classifier__max_bin': [50, 150, 255]
+#                    'classifier__seed': [200],
+#                    'classifier__num_leaves': [16,31],
+#                    'classifier__max_depth': [-1, 4, 10],
+#                    'classifier__max_bin': [10, 100, 255]
 #                  }
+
+hyperparameters = { 'classifier__learning_rate': [0.01, 0.1],
+                    'classifier__num_iterations': [500,800,1300],
+                    'classifier__subsample': [0.80,0.95],
+                    'classifier__subsample_freq': [1,3,5],
+                    'classifier__colsample_bytree': [0.80,0.95],
+                    'classifier__silent': [False],
+                    'classifier__seed': [500],
+                    'classifier__num_leaves': [8,23,31],
+                    'classifier__max_depth': [-1, 2, 7],
+                    'classifier__max_bin': [50, 150, 255]
+                  }
 
 #NB: When CV is an integer, it computes cv with stratifiedkfold, hence we don't need to split it before
 clf = GridSearchCV(pipeline, hyperparameters, cv = 6, scoring = 'roc_auc')
@@ -104,7 +104,7 @@ clf.refit
 
 bestParam = clf.best_params_
 
-dfg=open("bestParams1.txt",'w')
+dfg=open("bestParams2.txt",'w')
 json.dump(bestParam,dfg)
 dfg.close()
 
@@ -122,5 +122,5 @@ sub_1['target'] = y_pred
 
 #%%
 
-sub_1.to_csv('GridSearchCVLGBM1.csv', index = False)
+sub_1.to_csv('GridSearchCVLGBM2.csv', index = False)
 
