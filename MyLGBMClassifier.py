@@ -7,11 +7,27 @@ from lightgbm import LGBMClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier, AdaBoostClassifier
 
+from sklearn.metrics import make_scorer
 
 #%%
 train = pd.read_csv('../train.csv')
 test = pd.read_csv('../test.csv')
 
+#%% Gini
+def gini(actual, pred, cmpcol = 0, sortcol = 1):
+    all = np.asarray(np.c_[ actual, pred, np.arange(actual.shape[0]) ], dtype=np.float)
+    all = all[ np.lexsort((all[:,2], -1*all[:,1])) ]
+    totalLosses = all[:,0].sum()
+    giniSum = all[:,0].cumsum().sum() / totalLosses
+ 
+    giniSum -= (actual.shape[0] + 1) / 2.
+    return giniSum / actual.shape[0]
+    
+def gini_normalized(a, p):
+    return gini(a, p) / gini(a, a)
+
+gini_score = make_scorer(gini_normalized,greater_is_better=True)
+gini_loss  = make_scorer(gini_normalized, greater_is_better=False)
 #%%
 
 id_test = test['id'].values
@@ -74,7 +90,7 @@ class Ensemble(object):
                 S_test_i[:, j] = clf.predict_proba(T)[:,1]
             S_test[:, i] = S_test_i.mean(axis=1)
 
-        results = cross_val_score(self.stacker, S_train, y, cv=3, scoring='roc_auc')
+        results = cross_val_score(self.stacker, S_train, y, cv=3, scoring=gini_score)
         print("Stacker score: %.5f" % (results.mean()))
 
         self.stacker.fit(S_train, y)
@@ -168,11 +184,11 @@ lgb_model3 = LGBMClassifier(**lgb_params3)
 
 #%%
 #log_model = LogisticRegression()
-log_model = GradientBoostingClassifier()
+#log_model = GradientBoostingClassifier()
 #log_model = RandomForestClassifier()
 #log_model = ExtraTreesClassifier()
 #log_model = AdaBoostClassifier()
-#log_model = LGBMClassifier()
+log_model = LGBMClassifier()
       
 stack = Ensemble(n_splits=10,
         stacker = log_model,
@@ -187,5 +203,5 @@ sub_1['target'] = y_pred
 
 #%%
 
-sub_1.to_csv('MyLGBM.csv', index = False)
+sub_1.to_csv('MyLGBM_gini_.csv', index = False)
 
