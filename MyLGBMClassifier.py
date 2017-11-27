@@ -20,9 +20,9 @@ target_train = train['target'].values
 train = train.drop(['target','id'], axis = 1)
 test = test.drop(['id'], axis = 1)
 
-#col_to_drop = train.columns[train.columns.str.startswith('ps_calc_')]
-#train = train.drop(col_to_drop, axis=1)  
-#test = test.drop(col_to_drop, axis=1)  
+col_to_drop = train.columns[train.columns.str.startswith('ps_calc_')]
+train = train.drop(col_to_drop, axis=1)  
+test = test.drop(col_to_drop, axis=1)  
 
 train = train.replace(-1, np.nan)
 test = test.replace(-1, np.nan)
@@ -167,8 +167,13 @@ lgb_model3 = LGBMClassifier(**lgb_params3)
 
 
 #%%
-log_model = LogisticRegression()
-       
+#log_model = LogisticRegression()
+log_model = GradientBoostingClassifier()
+#log_model = RandomForestClassifier()
+#log_model = ExtraTreesClassifier()
+#log_model = AdaBoostClassifier()
+#log_model = LGBMClassifier()
+      
 stack = Ensemble(n_splits=10,
         stacker = log_model,
         base_models = (lgb_model, lgb_model2))        
