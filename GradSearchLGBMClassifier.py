@@ -78,16 +78,28 @@ pipeline.get_params().keys()
 #                    'classifier__max_bin': [10, 100, 255]
 #                  }
 
-hyperparameters = { 'classifier__learning_rate': [0.01, 0.1],
-                    'classifier__num_iterations': [500,800,1300],
-                    'classifier__subsample': [0.80,0.95],
-                    'classifier__subsample_freq': [1,3,5],
-                    'classifier__colsample_bytree': [0.80,0.95],
+#hyperparameters = { 'classifier__learning_rate': [0.01, 0.1],
+#                    'classifier__num_iterations': [500,800,1300],
+#                    'classifier__subsample': [0.80,0.95],
+#                    'classifier__subsample_freq': [1,3,5],
+#                    'classifier__colsample_bytree': [0.80,0.95],
+#                    'classifier__silent': [False],
+#                    'classifier__seed': [500],
+#                    'classifier__num_leaves': [8,23,31],
+#                    'classifier__max_depth': [-1, 2, 7],
+#                    'classifier__max_bin': [50, 150, 255]
+#                  }
+
+hyperparameters = { 'classifier__learning_rate': [0.5, 0.05],
+                    'classifier__num_iterations': [200,800,1100],
+                    'classifier__subsample': [0.75,0.85],
+                    'classifier__subsample_freq': [1,4,8],
+                    'classifier__colsample_bytree': [0.75,0.85],
                     'classifier__silent': [False],
-                    'classifier__seed': [500],
-                    'classifier__num_leaves': [8,23,31],
-                    'classifier__max_depth': [-1, 2, 7],
-                    'classifier__max_bin': [50, 150, 255]
+                    'classifier__seed': [1000],
+                    'classifier__num_leaves': [5,20,31],
+                    'classifier__max_depth': [-1, 5, 15],
+                    'classifier__max_bin': [75, 255]
                   }
 
 #NB: When CV is an integer, it computes cv with stratifiedkfold, hence we don't need to split it before
@@ -104,7 +116,7 @@ clf.refit
 
 bestParam = clf.best_params_
 
-dfg=open("bestParams2.txt",'w')
+dfg=open("bestParams3.txt",'w')
 json.dump(bestParam,dfg)
 dfg.close()
 
@@ -122,5 +134,5 @@ sub_1['target'] = y_pred
 
 #%%
 
-sub_1.to_csv('GridSearchCVLGBM2.csv', index = False)
+sub_1.to_csv('GridSearchCVLGBM3.csv', index = False)
 
