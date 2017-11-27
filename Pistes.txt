@@ -2,6 +2,8 @@ A regarder: https://www.kaggle.com/yifanxie/porto-seguro-tutorial-end-to-end-ens
 
 Travail en cours:
 -> LGMClassifier personnalisé avec des paramètres différents (dropout, ...)  (RK: la foncion dart met un temps monstrueux, la tester a coté)
+-> Faire de la gridsearchcv et stocker les meilleurs paramètres puis les réutiliser avec la méthode ensembling
+-> Faire de l'ensembling avec les meilleurs résultats.
 
 A faire:
 -> Enlever les colonnes ou il y a trop de monde
