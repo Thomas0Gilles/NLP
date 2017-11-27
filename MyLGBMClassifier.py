@@ -75,7 +75,7 @@ class Ensemble(object):
                 S_test_i[:, j] = clf.predict_proba(T)[:,1]
             S_test[:, i] = S_test_i.mean(axis=1)
 
-        results = cross_val_score(self.stacker, S_train, y, cv=3, scoring='roc_auc')
+        results = cross_val_score(self.stacker, S_train, y, cv=3, scoring='roc_auc')  #gini=2*auc-1
         print("Stacker score: %.5f" % (results.mean()))
 
         self.stacker.fit(S_train, y)
@@ -163,7 +163,7 @@ lgb_model3 = LGBMClassifier(**lgb_params3)
 
 
 #%%
-log_model = LogisticRegression()
+log_model = LogisticRegression()  #Simple, quick, efficient without tuning
 #log_model = LGBMClassifier()
 
 ##These methods seems to be costly and to slow the algorithm down
@@ -192,11 +192,13 @@ sub_3 = pd.read_csv('../Submissions/MyLGBM2.csv')
 sub_4 = pd.read_csv('../Submissions/MyLGBM1.csv')
 sub_5 = pd.read_csv('../Submissions/blend1.csv')
 sub_6 = pd.read_csv('../Submissions/DartLGBM.csv')
+sub_7 = pd.read_csv('../Submissions/MyLGBM3.csv')
+sub_8 = pd.read_csv('../Submissions/MyLGBM_gini_.csv')
 
 sub = pd.DataFrame()
 sub['id'] = id_test
-sub['target'] = np.exp(np.mean([sub_1['target'].apply(lambda x: np.log(x)), sub_2['target'].apply(lambda x: np.log(x)), sub_3['target'].apply(lambda x: np.log(x)), sub_4['target'].apply(lambda x: np.log(x)), sub_5['target'].apply(lambda x: np.log(x)), sub_6['target'].apply(lambda x: np.log(x))], axis =0))
+sub['target'] = np.exp(np.mean([sub_1['target'].apply(lambda x: np.log(x)), sub_2['target'].apply(lambda x: np.log(x)), sub_3['target'].apply(lambda x: np.log(x)), sub_4['target'].apply(lambda x: np.log(x)), sub_5['target'].apply(lambda x: np.log(x)), sub_6['target'].apply(lambda x: np.log(x)), sub_7['target'].apply(lambda x: np.log(x)), sub_8['target'].apply(lambda x: np.log(x))], axis =0))
 
-sub.to_csv('sub.csv', index = False)
+sub.to_csv('sub_ensemble.csv', index = False)
 
 
