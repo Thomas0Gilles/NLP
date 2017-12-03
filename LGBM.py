@@ -98,14 +98,12 @@ df_transactions = pd.read_csv('../data/transactions.csv',dtype = {'payment_metho
                                                                   'payment_plan_days' : np.uint8,
                                                                   'plan_list_price' : np.uint8,
                                                                   'actual_amount_paid': np.uint8,
-                                                                  'is_auto_renew' : np.bool,
-                                                                  'is_cancel' : np.bool})
+                                                                  'is_auto_renew' : np.bool}) #,'is_cancel' : np.bool
 df_transactions = pd.concat((df_transactions, pd.read_csv('../data/transactions_v2.csv', dtype = {'payment_method' : 'category',
                                                                   'payment_plan_days' : np.uint8,
                                                                   'plan_list_price' : np.uint8,
-                                                                  'actual_amount_paid': np.uint8,
-                                                                  'is_auto_renew' : np.bool,
-                                                                  'is_cancel' : np.bool})), axis=0, ignore_index=True).reset_index(drop=True)
+                                                                  'actual_amount_paid': np.uint8, #,'is_cancel' : np.bool
+                                                                  'is_auto_renew' : np.bool})), axis=0, ignore_index=True).reset_index(drop=True)
 
 
 
