@@ -12,7 +12,12 @@ import gc
 df_train = pd.read_csv('../data/train.csv',dtype={'is_churn' : bool,'msno' : str})
 #Ajout de train_v2, je ne sais pas si cela fonctionnera
 df_train = pd.concat((df_train, pd.read_csv('../data/train_v2.csv',dtype={'is_churn' : bool,'msno' : str})), axis=0, ignore_index=True).reset_index(drop=True)
-df_members = pd.read_csv('../data/members_v3.csv',dtype={'registered_via' : np.uint8, 'gender' : 'category'})
+df_members = pd.read_csv('../data/members_v3.csv',dtype={'registered_via' : np.uint8})
+
+gender = {'male':1, 'female':2}
+df_members['gender'] = df_members['gender'].map(gender)
+
+df_members = df_members.fillna(0)
 
 df_train = pd.merge(left = df_train,right = df_members,how = 'left',on=['msno'])
 
@@ -79,8 +84,12 @@ for train_indices,val_indices in ShuffleSplit(n_splits=1,test_size = 0.1,train_s
     
 #%% Import df_test with the same methodology
 df_test = pd.read_csv('../data/sample_submission_zero.csv',dtype = {'msno' : str})
-df_members = pd.read_csv('../data/members_v3.csv',dtype={'registered_via' : np.uint8,
-                                                      'gender' : 'category'})
+df_members = pd.read_csv('../data/members_v3.csv',dtype={'registered_via' : np.uint8})
+
+gender = {'male':1, 'female':2}
+df_members['gender'] = df_members['gender'].map(gender)
+df_members = df_members.fillna(0)
+
 df_test = pd.merge(left=df_test,right=df_members,how='left',on=['msno'])
 
 del df_members
