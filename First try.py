@@ -26,9 +26,9 @@ transactions = []
 print('transaction merge...')
 
 #%% Count the number of logs
-#user_logs = pd.read_csv('../data/user_logs_v2.csv', usecols=['msno'])
-user_logs = pd.read_csv('../data/user_logs.csv', usecols=['msno'])
-user_logs = pd.concat((user_logs, pd.read_csv('../data/user_logs_v2.csv', usecols=['msno'])), axis=0, ignore_index=True).reset_index(drop=True)
+user_logs = pd.read_csv('../data/user_logs_v2.csv', usecols=['msno'])
+#user_logs = pd.read_csv('../data/user_logs.csv', usecols=['msno'])
+#user_logs = pd.concat((user_logs, pd.read_csv('../data/user_logs_v2.csv', usecols=['msno'])), axis=0, ignore_index=True).reset_index(drop=True)
 user_logs = pd.DataFrame(user_logs['msno'].value_counts().reset_index())
 user_logs.columns = ['msno','logs_count']
 
@@ -43,7 +43,7 @@ members = pd.read_csv('../data/members_v3.csv')
 train = pd.merge(train, members, how='left', on='msno')
 test = pd.merge(test, members, how='left', on='msno')
 members = []
-print('members merge...') 
+print('members merge...')
 
 #%% Categorize gender
 gender = {'male':1, 'female':2}
@@ -77,22 +77,22 @@ def transform_df2(df):
     df = df.drop_duplicates(subset=['msno'], keep='first')
     return df
 
-df_iter = pd.read_csv('../data/user_logs.csv', low_memory=False, iterator=True, chunksize=10000000)
+#df_iter = pd.read_csv('../data/user_logs.csv', low_memory=False, iterator=True, chunksize=10000000)
 last_user_logs = []
-i = 0 #~400 Million Records - starting at the end but remove locally if needed
-for df in df_iter:
-    if i>35:
-        if len(df)>0:
-            print(df.shape)
-            p = Pool(cpu_count())
-            df = p.map(transform_df, np.array_split(df, cpu_count()))   
-            df = pd.concat(df, axis=0, ignore_index=True).reset_index(drop=True)
-            df = transform_df2(df)
-            p.close(); p.join()
-            last_user_logs.append(df)
-            print('...', df.shape)
-            df = []
-    i+=1
+#i = 0 #~400 Million Records - starting at the end but remove locally if needed
+#for df in df_iter:
+#    if i>35:
+#        if len(df)>0:
+#            print(df.shape)
+#            p = Pool(cpu_count())
+#            df = p.map(transform_df, np.array_split(df, cpu_count()))
+#            df = pd.concat(df, axis=0, ignore_index=True).reset_index(drop=True)
+#            df = transform_df2(df)
+#            p.close(); p.join()
+#            last_user_logs.append(df)
+#            print('...', df.shape)
+#            df = []
+#    i+=1
 last_user_logs.append(transform_df(pd.read_csv('../data/user_logs_v2.csv')))
 last_user_logs = pd.concat(last_user_logs, axis=0, ignore_index=True).reset_index(drop=True)
 last_user_logs = transform_df2(last_user_logs)

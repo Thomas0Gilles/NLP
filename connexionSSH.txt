@@ -1,4 +1,4 @@
-#### GIT
+﻿#### GIT
 
 Initialisation du repo cloner sur le repo
 git init
@@ -16,7 +16,7 @@ git push    //Pusher les MAJ
 #### SSH
 
 //Charger des fichiers de son ordi vers le serveur
-scp DartLGBM.csv dsluser12@52.174.126.36:~/Desktop/Kaggle1/Submissions
+scp user_logs.csv.7z dsluser12@52.174.126.36:~/Desktop/Kaggle2/data
 sudo scp dsluser12@52.174.126.36:~/Desktop/Kaggle1/Volley-2k15/sub_ensemble.csv ~/Documents/Machine\ Learning\ 1/Kaggle/Submissions
 
 //Se connecter au serveur

@@ -1,0 +1,10 @@
+﻿TODO:
+-> Importer user_logs.csv
+-> Tester le first try avec toutes les données
+-> Feature enginerring accordingly to the Data Exploration Analysis
+-> Explore https://www.kaggle.com/talysacc/lgbm-starter-lb-0-23434
+
+
+First try : https://www.kaggle.com/the1owl/regressing-during-insomnia-0-21496
+Feature engineering : https://www.kaggle.com/jeru666/did-you-think-of-these-features
+Data exploration : https://www.kaggle.com/headsortails/should-i-stay-or-should-i-go-kkbox-eda
