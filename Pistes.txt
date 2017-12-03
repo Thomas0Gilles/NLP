@@ -2,11 +2,12 @@
 ﻿TODO:
 
 -> Importer user_logs.csv
+ sur la machine virtuelle
+-> Tester le XGB avec toutes les données
 
--> Tester le first try avec toutes les données
-
+-> Tester le LGBM, y ajouter les infos de user_logs	
 -> Feature enginerring accordingly to the Data Exploration Analysis
--> Explore https://www.kaggle.com/talysacc/lgbm-starter-lb-0-23434
+
 
 
 First try : https://www.kaggle.com/the1owl/regressing-during-insomnia-0-21496
