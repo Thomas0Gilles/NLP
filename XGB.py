@@ -133,4 +133,3 @@ for i in range(fold):
 pred /= fold
 test['is_churn'] = pred.clip(0.+1e-15, 1-1e-15)
 test[['msno','is_churn']].to_csv('xgb_0.csv', index=False)
-#test[['msno','is_churn']].to_csv('submission.csv.gz', index=False, compression='gzip')

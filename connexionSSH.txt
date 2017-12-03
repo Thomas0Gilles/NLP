@@ -18,7 +18,7 @@ git push    //Pusher les MAJ
 //Charger des fichiers de son ordi vers le serveur
 scp user_logs.csv.7z dsluser12@52.174.126.36:~/Desktop/Kaggle2/data
 sudo scp dsluser12@52.174.126.36:~/Desktop/Kaggle2/Submissions/submission.csv ~/Documents/Machine\ Learning\ 1/Kaggle2/Submissions
-Windows: scp dsluser12@52.174.126.36:~/Desktop/Kaggle2/Submissions/submission.csv ~\Desktop
+Windows: scp dsluser12@52.174.126.36:~/Desktop/Kaggle2/Submissions/LGBM_0.csv ~/Desktop
 
 //Se connecter au serveur
 ssh dsluser12@52.174.126.36
