@@ -108,8 +108,12 @@ last_user_logs=[]
 train = train.fillna(0)
 test = test.fillna(0)
 
-cols = [c for c in train.columns if c not in ['is_churn','msno']]
 
+id_test = test['msno'].values
+target_train = train['is_churn'].values
+
+train = train.drop(['msno','is_churn'], axis = 1)
+test = test.drop(['msno'], axis = 1)
 
 #%%
 def xgb_score(preds, dtrain):
@@ -149,7 +153,7 @@ params.append(params3)
 
 #%% Classifier
 Nfold = 5
-folds = list(StratifiedKFold(n_splits=Nfold, shuffle=True, random_state=2016).split(train[cols], train['is_churn']))
+folds = list(StratifiedKFold(n_splits=Nfold, shuffle=True, random_state=2016).split(train, target_train))
 
 S_train = np.zeros((train.shape[0], len(params)))
 S_test = np.zeros((test.shape[0], len(params)))
@@ -158,25 +162,28 @@ for i, param in enumerate(params):
     S_test_i = np.zeros((test.shape[0], Nfold))
 
     for j, (train_idx, test_idx) in enumerate(folds):
-        X_train = (train[cols])[train_idx]
-        y_train = (train['is_churn'])[train_idx]
-        X_holdout = (train[cols])[test_idx]
-        y_holdout = (train['is_churn'])[test_idx]
+        X_train = train[train_idx]
+        y_train = target_train[train_idx]
+        X_holdout = train[test_idx]
+        y_holdout = target_train[test_idx]
         
         watchlist = [(xgb.DMatrix(X_train, y_train), 'train'), (xgb.DMatrix(X_holdout, y_holdout), 'valid')]
         print ("Fit %d model, fold %d" % (i+1, j+1))
         model = xgb.train(param, xgb.DMatrix(X_train, y_train), 1500,  watchlist, feval=xgb_score, maximize=False, verbose_eval=10, early_stopping_rounds=50)
         
         S_train[test_idx, i] = model.predict(xgb.DMatrix(X_holdout), ntree_limit=model.best_ntree_limit)
-        S_test_i[:, j] = model.predict(xgb.DMatrix(test[cols]), ntree_limit=model.best_ntree_limit)
+        S_test_i[:, j] = model.predict(xgb.DMatrix(test), ntree_limit=model.best_ntree_limit)
         
     S_test[:, i] = S_test_i.mean(axis=1)
 
 #%% Stacker
 log_model = LogisticRegression()
 
-log_model.fit(S_train, train['is_churn'])
+log_model.fit(S_train, target_train)
 res = log_model.predict_proba(S_test)[:,1]
 
-test['is_churn'] = res
-test[['msno','is_churn']].to_csv('xgb_ensemble_0.csv', index=False)
+sub = pd.DataFrame()
+sub['msno'] = id_test
+sub['is_churn'] = res
+
+sub.to_csv('xgb_ensemble_0.csv', index=False)
