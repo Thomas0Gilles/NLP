@@ -8,6 +8,7 @@ from sklearn import *
 import sklearn
 
 from sklearn.metrics import log_loss
+from sklearn.metrics import make_scorer
 
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import cross_val_score
@@ -116,6 +117,8 @@ cols = [c for c in train.columns if c not in ['is_churn','msno']]
 
 
 #%%
+logloss = make_scorer(log_loss,greater_is_better=False)
+
 class Ensemble(object):
     def __init__(self, n_splits, stacker, base_models):
         self.n_splits = n_splits
@@ -148,7 +151,7 @@ class Ensemble(object):
                 S_test_i[:, j] = clf.predict_proba(T)[:,1]
             S_test[:, i] = S_test_i.mean(axis=1)
 
-        results = cross_val_score(self.stacker, S_train, y, cv=3, scoring=log_loss) 
+        results = cross_val_score(self.stacker, S_train, y, cv=3, scoring=logloss) 
         print("Stacker score: %.5f" % (results.mean()))
 
         self.stacker.fit(S_train, y)
