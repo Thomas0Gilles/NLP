@@ -8,6 +8,9 @@ import numpy as np
 from sklearn import *
 import sklearn
 
+from sklearn.model_selection import StratifiedKFold
+from sklearn.linear_model import LogisticRegression
+
 #%% Import train and test
 train = pd.read_csv('../data/train.csv')
 train = pd.concat((train, pd.read_csv('../data/train_v2.csv')), axis=0, ignore_index=True).reset_index(drop=True)
@@ -113,23 +116,67 @@ def xgb_score(preds, dtrain):
     labels = dtrain.get_label()
     return 'log_loss', metrics.log_loss(labels, preds)
 
-fold = 10
-for i in range(fold):
-    params = {
+params = []
+params1 = {
         'eta': 0.002, #use 0.002, was 0.02 before
         'max_depth': 7,
         'objective': 'binary:logistic',
         'eval_metric': 'logloss',
-        'seed': i,
+        'seed': 1,
         'silent': False
     }
-    x1, x2, y1, y2 = model_selection.train_test_split(train[cols], train['is_churn'], test_size=0.2, random_state=i)
-    watchlist = [(xgb.DMatrix(x1, y1), 'train'), (xgb.DMatrix(x2, y2), 'valid')]
-    model = xgb.train(params, xgb.DMatrix(x1, y1), 1500,  watchlist, feval=xgb_score, maximize=False, verbose_eval=50, early_stopping_rounds=50) #use 1500, was 150 before
-    if i != 0:
-        pred += model.predict(xgb.DMatrix(test[cols]), ntree_limit=model.best_ntree_limit)
-    else:
-        pred = model.predict(xgb.DMatrix(test[cols]), ntree_limit=model.best_ntree_limit)
-pred /= fold
-test['is_churn'] = pred.clip(0.+1e-15, 1-1e-15)
-test[['msno','is_churn']].to_csv('xgb_0.csv', index=False)
+params.append(params1)
+params2 = {
+        'eta': 0.005, #use 0.002, was 0.02 before
+        'max_depth': 15,
+        'objective': 'binary:logistic',
+        'eval_metric': 'logloss',
+        'subsample': 0.95,
+        'seed': 2,
+        'silent': False
+    }
+params.append(params2)
+params3 = {
+        'eta': 0.01, #use 0.002, was 0.02 before
+        'max_depth': 20,
+        'objective': 'binary:logistic',
+        'eval_metric': 'logloss',
+        'subsample': 0.80,
+        'seed': 3,
+        'silent': False
+    }
+params.append(params3)
+
+#%% Classifier
+Nfold = 5
+folds = list(StratifiedKFold(n_splits=Nfold, shuffle=True, random_state=2016).split(train[cols], train['is_churn']))
+
+S_train = np.zeros((train.shape[0], len(params)))
+S_test = np.zeros((test.shape[0], len(params)))
+for i, param in enumerate(params):
+    
+    S_test_i = np.zeros((test.shape[0], Nfold))
+
+    for j, (train_idx, test_idx) in enumerate(folds):
+        X_train = (train[cols])[train_idx]
+        y_train = (train['is_churn'])[train_idx]
+        X_holdout = (train[cols])[test_idx]
+        y_holdout = (train['is_churn'])[test_idx]
+        
+        watchlist = [(xgb.DMatrix(X_train, y_train), 'train'), (xgb.DMatrix(X_holdout, y_holdout), 'valid')]
+        print ("Fit %d model, fold %d" % (i+1, j+1))
+        model = xgb.train(param, xgb.DMatrix(X_train, y_train), 1500,  watchlist, feval=xgb_score, maximize=False, verbose_eval=10, early_stopping_rounds=50)
+        
+        S_train[test_idx, i] = model.predict(xgb.DMatrix(X_holdout), ntree_limit=model.best_ntree_limit)
+        S_test_i[:, j] = model.predict(xgb.DMatrix(test[cols]), ntree_limit=model.best_ntree_limit)
+        
+    S_test[:, i] = S_test_i.mean(axis=1)
+
+#%% Stacker
+log_model = LogisticRegression()
+
+log_model.fit(S_train, train['is_churn'])
+res = log_model.predict_proba(S_test)[:,1]
+
+test['is_churn'] = res
+test[['msno','is_churn']].to_csv('xgb_ensemble_0.csv', index=False)
