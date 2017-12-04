@@ -202,7 +202,7 @@ log_model = LogisticRegression()
 
 stack = Ensemble(n_splits=6,
         stacker = log_model,
-        base_models = (lgb_model, lgb_model2))        
+        base_models = (lgb_model, lgb_model2, lgb_model3))        
         
 y_pred = stack.fit_predict(train[cols], train['is_churn'], test[cols])        
 
