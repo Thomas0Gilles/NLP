@@ -150,9 +150,14 @@ params3 = {
         'silent': False
     }
 params.append(params3)
+#%%
+train = np.array(train)
+test = np.array(test)
+target_train = np.array(target_train)
 
 #%% Classifier
 Nfold = 5
+
 folds = list(StratifiedKFold(n_splits=Nfold, shuffle=True, random_state=2016).split(train, target_train))
 
 S_train = np.zeros((train.shape[0], len(params)))
