@@ -107,6 +107,7 @@ last_user_logs=[]
 #%% Replace na by 0, extract the columns used for prediction
 
 
+
 id_test = test['msno'].values
 target_train = train['is_churn'].values
 
