@@ -105,8 +105,6 @@ test = pd.merge(test, last_user_logs, how='left', on='msno')
 last_user_logs=[]
 
 #%% Replace na by 0, extract the columns used for prediction
-train = train.fillna(0)
-test = test.fillna(0)
 
 
 id_test = test['msno'].values
@@ -114,6 +112,13 @@ target_train = train['is_churn'].values
 
 train = train.drop(['msno','is_churn'], axis = 1)
 test = test.drop(['msno'], axis = 1)
+
+train = train.fillna(0)
+test = test.fillna(0)
+
+cat = [a for a in train.columns]
+train = train[cat]
+test = test[cat]
 
 #%%
 def xgb_score(preds, dtrain):

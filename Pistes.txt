@@ -1,3 +1,15 @@
+Erreurs à régler:
+Traceback (most recent call last):
+  File "XGB_ensemble.py", line 180, in <module>
+    S_test_i[:, j] = model.predict(xgb.DMatrix(test), ntree_limit=model.best_ntree_limit)
+  File "/anaconda/envs/py35/lib/python3.5/site-packages/xgboost-0.6-py3.5.egg/xgboost/core.py", line 1042, in predict
+    self._validate_features(data)
+  File "/anaconda/envs/py35/lib/python3.5/site-packages/xgboost-0.6-py3.5.egg/xgboost/core.py", line 1286, in _validate_features
+    data.feature_names))
+ValueError: feature_names mismatch: ['f0', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19', 'f20', 'f21', 'f22'] ['f0', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19', 'f20', 'f21', 'f22', 'f23']
+training data did not have the following fields: f23
+
+
 ﻿
 ﻿TODO:
 
