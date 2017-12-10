@@ -1,5 +1,6 @@
 ## Some feature inspired from https://www.kaggle.com/jeru666/did-you-think-of-these-features
 import pandas as pd
+print(pd.__version__)
 import numpy as np
 
 #%%
@@ -50,13 +51,13 @@ df_members = pd.read_csv('../data/members_v3.csv')
 change_datatype(df_members)
 change_datatype_float(df_members)
 
-date_cols = ['registration_init_time', 'expiration_date']
+date_cols = ['registration_init_time']
 
 for col in date_cols:
     df_members[col] = pd.to_datetime(df_members[col], format='%Y%m%d')
     
 #--- difference in days ---
-df_members['registration_duration'] = df_members.expiration_date - df_members.registration_init_time
+df_members['registration_duration'] = pd.to_datetime(20170331,format='%Y%m%d') - df_members.registration_init_time
 df_members['registration_duration'] = df_members['registration_duration'] / np.timedelta64(1, 'D')
 df_members['registration_duration'] = df_members['registration_duration'].astype(int)
 
