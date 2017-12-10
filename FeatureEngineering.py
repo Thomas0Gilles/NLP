@@ -76,7 +76,6 @@ df_comb['autorenew_&_not_cancel'] = ((df_comb.is_auto_renew == 1) == (df_comb.is
 df_comb['notAutorenew_&_cancel'] = ((df_comb.is_auto_renew == 0) == (df_comb.is_cancel == 1)).astype(np.int8)
 df_comb['long_time_user'] = (((df_comb['registration_duration'] / 365).astype(int)) > 1).astype(int)
 
-#Consume memory
-datetime_cols = list(df_comb.select_dtypes(include=['datetime64[ns]']).columns)
+#%%
 print("Write ...")
-pd.write_csv(df_comb,'../data/trans_mem.csv')
+df_comb.to_csv('../data/trans_mem.csv')
