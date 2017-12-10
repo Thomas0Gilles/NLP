@@ -22,6 +22,7 @@ df_iter = pd.read_csv('../data/user_logs.csv', low_memory=False, iterator=True, 
 last_user_logs = []
 i = 0 #~400 Million Records - starting at the end but remove locally if needed
 for df in df_iter:
+    print("New chunk !")
     if i>35:
         if len(df)>0:
             print(df.shape)
@@ -47,7 +48,7 @@ for col in date_cols:
 
 print('Selection')
 Ja2017 = pd.to_datetime(20170101, format='%Y%m%d')
-last_user_logs = last_user_logs[last_user_logs['newest_date_available'] > Ja2017]
+last_user_logs = last_user_logs[last_user_logs['date'] > Ja2017]
 print("After selection: ",last_user_logs.shape)
 
 print('Aggregation')
