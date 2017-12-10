@@ -1,27 +1,13 @@
-Erreurs à régler:
-Traceback (most recent call last):
-  File "XGB_ensemble.py", line 180, in <module>
-    S_test_i[:, j] = model.predict(xgb.DMatrix(test), ntree_limit=model.best_ntree_limit)
-  File "/anaconda/envs/py35/lib/python3.5/site-packages/xgboost-0.6-py3.5.egg/xgboost/core.py", line 1042, in predict
-    self._validate_features(data)
-  File "/anaconda/envs/py35/lib/python3.5/site-packages/xgboost-0.6-py3.5.egg/xgboost/core.py", line 1286, in _validate_features
-    data.feature_names))
-ValueError: feature_names mismatch: ['f0', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19', 'f20', 'f21', 'f22'] ['f0', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19', 'f20', 'f21', 'f22', 'f23']
-training data did not have the following fields: f23
-
-
-﻿
 ﻿TODO:
+-> Ajout d'un scaling des valeurs pour les données
+-> Tester différentes architectures (le mettre dans la grid)
+-> Gérer les variables catégorielles
 
--> Importer user_logs.csv
- sur la machine virtuelle
--> Tester le XGB avec toutes les données
+NNKeras:
+-> Ajouter un scaling des valeurs 
 
--> Tester le LGBM, y ajouter les infos de user_logs	
--> Feature enginerring accordingly to the Data Exploration Analysis
+FeatureEngineeringUser:
+-> Voir si un autre FE est mieux, réfléchir en détail
 
-
-
-First try : https://www.kaggle.com/the1owl/regressing-during-insomnia-0-21496
-Feature engineering : https://www.kaggle.com/jeru666/did-you-think-of-these-features
-Data exploration : https://www.kaggle.com/headsortails/should-i-stay-or-should-i-go-kkbox-eda
+FeatureEngineering:
+-> Réfléchir à d'autres possibilités

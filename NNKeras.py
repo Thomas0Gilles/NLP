@@ -34,9 +34,15 @@ del userFE
 
 #%% Create data & label
 y = train['is_churn']
-X = train.drop(['is_churn'], axis=1)
+X = train.drop(['is_churn','msno'], axis=1)
 del train
 
+result = pd.DataFrame()
+result['msno'] = test['msno']
+test = test.drop(['msno','is_churn'], axis=1)
+
+N_feature = X.shape[1]
+print("Number of features: ",N_feature)
 # We could use CV to improve the result
 # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=2015)
 
@@ -45,7 +51,7 @@ del train
 def create_model(optimizer='rmsprop', init='glorot_uniform'):
 	# create model
 	model = Sequential()
-	model.add(Dense(12, input_dim=8, kernel_initializer=init, activation='relu'))
+	model.add(Dense(12, input_dim=N_feature, kernel_initializer=init, activation='relu'))
 	model.add(Dense(8, kernel_initializer=init, activation='relu'))
 	model.add(Dense(1, kernel_initializer=init, activation='sigmoid'))
 	# Compile model
@@ -82,6 +88,7 @@ print(bestParam)
 pred = model.predict(test)
 
 #%% Write results
-test['is_churn'] = pred.clip(0.+1e-15, 1-1e-15)
-test[['msno','is_churn']].to_csv('NN_FE_0.csv', index=False)
+
+result['is_churn'] = pred
+result.to_csv('NN_FE_0.csv', index=False)
 
