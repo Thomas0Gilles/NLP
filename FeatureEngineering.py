@@ -35,7 +35,7 @@ df_transactions['amt_per_day'] = df_transactions['actual_amount_paid'] / df_tran
 
 date_cols = ['transaction_date', 'membership_expire_date']
 for col in date_cols:
-    df_transactions[col] = pd.to_datetime(df_transactions[col], format='%Y%m%d', errors='coerce')
+    df_transactions[col] = pd.to_datetime(df_transactions[col], infer_datetime_format=True) #format='%Y%m%d'
 
 df_transactions['membership_duration'] = df_transactions.membership_expire_date - df_transactions.transaction_date
 df_transactions['membership_duration'] = df_transactions['membership_duration'] / np.timedelta64(1, 'D')
