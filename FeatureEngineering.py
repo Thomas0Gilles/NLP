@@ -78,7 +78,5 @@ df_comb['long_time_user'] = (((df_comb['registration_duration'] / 365).astype(in
 
 #Consume memory
 datetime_cols = list(df_comb.select_dtypes(include=['datetime64[ns]']).columns)
-df_comb = df_comb.drop([datetime_cols], 1)
-
 print("Write ...")
 pd.write_csv(df_comb,'../data/trans_mem.csv')
