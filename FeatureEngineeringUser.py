@@ -52,6 +52,7 @@ print("After selection: ",last_user_logs.shape)
 
 print('Aggregation')
 last_user_logs = last_user_logs.groupby(last_user_logs.msno).agg(['sum','min','max','mean'])
+last_user_logs['msno'] = last_user_logs.index.values
 print("At the end: ",last_user_logs.shape)
 
 print("Write ...")
