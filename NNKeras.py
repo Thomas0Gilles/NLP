@@ -36,7 +36,12 @@ test = pd.read_csv('../data/sample_submission_v2.csv')
 
 #%% Merge trans_mem
 print("Loading 2 ...")
-transmem = pd.read_csv('../data/trans_mem_scaled.csv')
+transmem = pd.read_csv('../data/trans_mem_scaled.csv', dtype={'Unnamed: 0':np.int32,'payment_plan_days':np.float32,'plan_list_price':np.float32,
+                                                              'actual_amount_paid':np.float32,'is_auto_renew': np.int8, 'is_cancel': np.float32,
+                                                              'trans_count':np.float32,'discount':np.float32,'is_discount':np.int8,'amt_per_day': np.float32,
+                                                              'membership_duration':np.float32,'bd':np.float32,'registration_duration': np.float32,'reg_mem_duration':np.float32,
+                                                              'autorenew_&_not_cancel':np.int8,'notAutorenew_&_cancel': np.int8,'long_time_user':np.float32,'2':np.int8})
+
 
 train = pd.merge(train, transmem, how='left', on='msno')
 test = pd.merge(test, transmem, how='left', on='msno')
@@ -81,9 +86,9 @@ test = test.fillna(0)
 def create_model(optimizer='rmsprop', init='glorot_uniform'):
 	# create model
 	model = Sequential()
-	model.add(Dense(110, input_dim=N_feature, kernel_initializer=init, activation='relu'))
-	model.add(Dense(15, kernel_initializer=init, activation='relu'))
-	model.add(Dense(1, kernel_initializer=init, activation='sigmoid'))
+	model.add(Dense(int(110), input_dim=int(N_feature), kernel_initializer=init, activation='relu'))
+	model.add(Dense(int(15), kernel_initializer=init, activation='relu'))
+	model.add(Dense(int(1), kernel_initializer=init, activation='sigmoid'))
 	# Compile model
 	model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 	return model
