@@ -42,12 +42,19 @@ df_transactions['membership_duration'] = df_transactions.membership_expire_date 
 df_transactions['membership_duration'] = df_transactions['membership_duration'] / np.timedelta64(1, 'D')
 df_transactions['membership_duration'] = df_transactions['membership_duration'].astype(int)
 
+#Drop dates
+df_transactions = df_transactions.drop(date_cols, axis=1)
+
 change_datatype(df_transactions)
 change_datatype_float(df_transactions)
 
 #%% Import member
 print("Read ...")
 df_members = pd.read_csv('../data/members_v3.csv')
+gender = {'male':1, 'female':2}
+df_members['gender'] = df_members['gender'].map(gender)
+df_members['bd'] = df_members['bd'].clip(0,100)
+
 change_datatype(df_members)
 change_datatype_float(df_members)
 
@@ -57,9 +64,13 @@ for col in date_cols:
     df_members[col] = pd.to_datetime(df_members[col], format='%Y%m%d')
     
 #--- difference in days ---
-df_members['registration_duration'] = pd.to_datetime(20170331,format='%Y%m%d') - df_members.registration_init_time
+df_members['registration_duration'] = pd.to_datetime(20170430,format='%Y%m%d') - df_members.registration_init_time
 df_members['registration_duration'] = df_members['registration_duration'] / np.timedelta64(1, 'D')
 df_members['registration_duration'] = df_members['registration_duration'].astype(int)
+
+#Drop dates
+df_members = df_members.drop(date_cols, axis=1)
+
 
 change_datatype(df_members)
 change_datatype_float(df_members)
@@ -75,6 +86,16 @@ df_comb['reg_mem_duration'] = df_comb['registration_duration'] - df_comb['member
 df_comb['autorenew_&_not_cancel'] = ((df_comb.is_auto_renew == 1) == (df_comb.is_cancel == 0)).astype(np.int8)
 df_comb['notAutorenew_&_cancel'] = ((df_comb.is_auto_renew == 0) == (df_comb.is_cancel == 1)).astype(np.int8)
 df_comb['long_time_user'] = (((df_comb['registration_duration'] / 365).astype(int)) > 1).astype(int)
+
+#%%
+cat_features = ['payment_method_id','gender','city','registered_via']
+for column in cat_features:
+	temp = pd.get_dummies(pd.Series(df_comb[column]))
+	df_comb = pd.concat([df_comb,temp],axis=1)
+	df_comb = df_comb.drop([column],axis=1)
+
+change_datatype(df_comb)
+change_datatype_float(df_comb)
 
 #%%
 print("Write ...")

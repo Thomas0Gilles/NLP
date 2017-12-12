@@ -23,18 +23,17 @@ last_user_logs = []
 i = 0 #~400 Million Records - starting at the end but remove locally if needed
 for df in df_iter:
     print("New chunk !")
-    if i>35:
-        if len(df)>0:
-            print(df.shape)
-            p = Pool(cpu_count())
-            df = p.map(transform_df, np.array_split(df, cpu_count()))
-            df = pd.concat(df, axis=0, ignore_index=True).reset_index(drop=True)
-            df = transform_df2(df)
-            p.close(); p.join()
-            last_user_logs.append(df)
-            print('...', df.shape)
-            df = []
-    i+=1
+    if len(df)>0:
+        print(df.shape)
+        p = Pool(cpu_count())
+        df = p.map(transform_df, np.array_split(df, cpu_count()))
+        df = pd.concat(df, axis=0, ignore_index=True).reset_index(drop=True)
+        df = transform_df2(df)
+        p.close(); p.join()
+        last_user_logs.append(df)
+        print('...', df.shape)
+        print('Global shape: ', last_user_logs.shape)
+        df = []
 print('Concat')
 last_user_logs.append(transform_df(pd.read_csv('../data/user_logs_v2.csv')))
 last_user_logs = pd.concat(last_user_logs, axis=0, ignore_index=True).reset_index(drop=True)
@@ -47,12 +46,14 @@ for col in date_cols:
     last_user_logs[col] = pd.to_datetime(last_user_logs[col], format='%Y%m%d')
 
 print('Selection')
-Ja2017 = pd.to_datetime(20170101, format='%Y%m%d')
-last_user_logs = last_user_logs[last_user_logs['date'] > Ja2017]
+Fe2017 = pd.to_datetime(20170102, format='%Y%m%d')
+last_user_logs = last_user_logs[last_user_logs['date'] >= Fe2017]
+#Je sais pas si c'ets vraiment biend e drop la date mais je ne voi pas comment un NN l'exploite. Donc je drop toutes les dates
+last_user_logs = last_user_logs.drop(['date'], axis=1)
 print("After selection: ",last_user_logs.shape)
 
 print('Aggregation')
-last_user_logs = last_user_logs.groupby(last_user_logs.msno).agg(['sum','min','max','mean'])
+last_user_logs = last_user_logs.groupby(last_user_logs.msno).agg({'num_25': ['sum','std','median','mean','nunique'], 'num_50':['sum','std','median','mean'],'num_75':['sum','std','median','mean'],'num_985':['sum','std','median','mean'], 'num_100':['sum','std','median','mean'],'num_unq':['sum','std','median','mean'], 'total_secs':['sum','std','median','mean']})
 last_user_logs['msno'] = last_user_logs.index.values
 print("At the end: ",last_user_logs.shape)
 
