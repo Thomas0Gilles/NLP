@@ -33,7 +33,10 @@ change_datatype_float(df_transactions)
 
 
 #%% Creating new feature
-df_transactions['trans_count'] = df_transactions.groupby(df_transactions.msno).agg({'msno':'count'})
+dcount = pd.DataFrame(df_transactions['msno'].value_counts().reset_index())
+dcount.columns = ['msno','trans_count']
+df_transactions = pd.merge(df_transactions, dcount, on='msno', how='inner')
+
 df_transactions['discount'] = df_transactions['plan_list_price'] - df_transactions['actual_amount_paid']
 df_transactions['is_discount'] = df_transactions.discount.apply(lambda x: 1 if x > 0 else 0)
 df_transactions['amt_per_day'] = df_transactions['actual_amount_paid'] / df_transactions['payment_plan_days']
