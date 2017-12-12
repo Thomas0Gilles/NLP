@@ -89,14 +89,18 @@ df_comb['notAutorenew_&_cancel'] = ((df_comb.is_auto_renew == 0) == (df_comb.is_
 df_comb['long_time_user'] = (((df_comb['registration_duration'] / 365).astype(int)) > 1).astype(int)
 
 #%%
+print('Categorical encoding')
 cat_features = ['payment_method_id','gender','city','registered_via']
 for column in cat_features:
 	temp = pd.get_dummies(pd.Series(df_comb[column]))
 	df_comb = pd.concat([df_comb,temp],axis=1)
 	df_comb = df_comb.drop([column],axis=1)
 
+print('Scaling')
 col_to_scale = ['long_time_user','reg_mem_duration','registration_duration','membership_duration','discount','amt_per_day','bd','payment_plan_days','plan_list_price','actual_amount_paid']
-df_comb[col_to_scale] = preprocessing.scale(df_comb[col_to_scale])
+for c in col_to_scale:
+    moy = np.nanmean(df_comb[c])
+    df_comb[c] = (df_comb[c] - moy)/np.sqrt(np.nansum(np.square(df_comb[c] - moy)))
 
 change_datatype(df_comb)
 change_datatype_float(df_comb)

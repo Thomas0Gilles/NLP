@@ -35,7 +35,7 @@ test = pd.read_csv('../data/sample_submission_v2.csv')
 
 #%% Merge trans_mem
 print("Loading 2 ...")
-transmem = pd.read_csv('../data/trans_mem.csv', usecols=['msno'])
+transmem = pd.read_csv('../data/trans_mem_scaled.csv', usecols=['msno'])
 
 train = pd.merge(train, transmem, how='left', on='msno')
 test = pd.merge(test, transmem, how='left', on='msno')
@@ -43,7 +43,7 @@ del transmem
 
 #%% Merge user_FE
 print("Loading 3 ...")
-userFE = pd.read_csv('../data/user_FE.csv', usecols=['msno'])
+userFE = pd.read_csv('../data/user_FE_scaled.csv', usecols=['msno'])
 
 train = pd.merge(train, userFE, how='left', on='msno')
 test = pd.merge(test, userFE, how='left', on='msno')
@@ -67,6 +67,9 @@ change_datatype_float(X)
 
 change_datatype(test)
 change_datatype_float(test)
+
+X = X.fillna(0)
+test = test.fillna(0)
 
 #%%
 # We could use CV to improve the result
