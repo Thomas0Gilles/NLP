@@ -33,6 +33,7 @@ print("Loading 1 ...")
 train = pd.read_csv('../data/train.csv')
 train = pd.concat((train, pd.read_csv('../data/train_v2.csv')), axis=0, ignore_index=True).reset_index(drop=True)
 test = pd.read_csv('../data/sample_submission_v2.csv')
+print('Shape : ', train.shape)
 
 #%% Merge trans_mem
 print("Loading 2 ...")
@@ -41,6 +42,7 @@ transmem = pd.read_csv('../data/trans_mem_scaled.csv', usecols=['msno'])
 train = pd.merge(train, transmem, how='left', on='msno')
 test = pd.merge(test, transmem, how='left', on='msno')
 del transmem
+print('Shape : ', train.shape)
 
 #%% Merge user_FE
 print("Loading 3 ...")
@@ -49,11 +51,15 @@ userFE = pd.read_csv('../data/user_FE_scaled.csv', usecols=['msno'])
 train = pd.merge(train, userFE, how='left', on='msno')
 test = pd.merge(test, userFE, how='left', on='msno')
 del userFE
+print('Shape : ', train.shape)
 
 #%% Create data & label
 y = train['is_churn']
 X = train.drop(['is_churn','msno'], axis=1)
 del train
+N_feature = X.shape[1]
+print('Shape : ', X.shape)
+print("Number of features: ",N_feature)
 
 result = pd.DataFrame()
 result['msno'] = test['msno']
