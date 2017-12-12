@@ -37,7 +37,7 @@ print('Shape : ', train.shape)
 
 #%% Merge trans_mem
 print("Loading 2 ...")
-transmem = pd.read_csv('../data/trans_mem_scaled.csv', usecols=['msno'])
+transmem = pd.read_csv('../data/trans_mem_scaled.csv')
 print('Shape trans : ',transmem.shape)
 print('Columns values :',transmem.columns.values)
 
@@ -48,7 +48,7 @@ print('Shape : ', train.shape)
 
 #%% Merge user_FE
 print("Loading 3 ...")
-userFE = pd.read_csv('../data/user_FE_scaled.csv', usecols=['msno'])
+userFE = pd.read_csv('../data/user_FE_scaled.csv')
 
 train = pd.merge(train, userFE, how='left', on='msno')
 test = pd.merge(test, userFE, how='left', on='msno')
