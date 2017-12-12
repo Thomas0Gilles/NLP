@@ -57,7 +57,7 @@ print("After selection: ",last_user_logs.shape)
 
 #%%
 print('Aggregation')
-last_user_logs = last_user_logs.groupby(last_user_logs.msno).agg({'num_25': ['sum','std','median','mean','nunique'], 'num_50':['sum','std','median','mean'],'num_75':['sum','std','median','mean'],'num_985':['sum','std','median','mean'], 'num_100':['sum','std','median','mean'],'num_unq':['sum','std','median','mean'], 'total_secs':['sum','std','median','mean']})
+last_user_logs = last_user_logs.groupby(last_user_logs.msno).agg({'msno':'count','num_25': [np.nansum,np.nanstd,np.nanmean,np.nanmedian], 'num_50':[np.nansum,np.nanstd,np.nanmean,np.nanmedian],'num_75':[np.nansum,np.nanstd,np.nanmean,np.nanmedian],'num_985':[np.nansum,np.nanstd,np.nanmean,np.nanmedian], 'num_100':[np.nansum,np.nanstd,np.nanmean,np.nanmedian],'num_unq':[np.nansum,np.nanstd,np.nanmean,np.nanmedian], 'total_secs':[np.nansum,np.nanstd,np.nanmean,np.nanmedian]})
 
 #%%
 print('Scale')

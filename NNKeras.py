@@ -87,6 +87,16 @@ def create_model(optimizer='rmsprop', init='glorot_uniform'):
 	model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 	return model
 
+#Attention à la signification de Nb_node_hidde_layer
+def create_model_complex(optimizer='rmsprop', init='glorot_uniform', Nb_node = 110, Nb_node_hidde_layer = [15]):
+    model = Sequential()
+    model.add(Dense(Nb_node, input_dim=N_feature, kernel_initializer=init, activation='relu'))
+    for n in Nb_node_hidde_layer:
+       model.add(Dense(n, kernel_initializer=init, activation='relu'))
+    model.add(Dense(1, kernel_initializer=init, activation='sigmoid'))
+    model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+    return model
+
 model = KerasClassifier(build_fn=create_model, verbose=0)
 
 #%% grid search epochs, batch size and optimizer
