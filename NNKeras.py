@@ -9,6 +9,23 @@ import json
 # fix random seed for reproducibility
 seed = 2015
 np.random.seed(seed)
+#%%
+def change_datatype(df):
+    int_cols = list(df.select_dtypes(include=['int']).columns)
+    for col in int_cols:
+        if ((np.max(df[col]) <= 127) and(np.min(df[col] >= -128))):
+            df[col] = df[col].astype(np.int8)
+        elif ((np.max(df[col]) <= 32767) and(np.min(df[col] >= -32768))):
+            df[col] = df[col].astype(np.int16)
+        elif ((np.max(df[col]) <= 2147483647) and(np.min(df[col] >= -2147483648))):
+            df[col] = df[col].astype(np.int32)
+        else:
+            df[col] = df[col].astype(np.int64)
+
+def change_datatype_float(df):
+    float_cols = list(df.select_dtypes(include=['float']).columns)
+    for col in float_cols:
+        df[col] = df[col].astype(np.float32)
 
 #%% Loading 
 print("Loading 1 ...")
@@ -40,9 +57,18 @@ del train
 result = pd.DataFrame()
 result['msno'] = test['msno']
 test = test.drop(['msno','is_churn'], axis=1)
+test = test[X.columns]
 
 N_feature = X.shape[1]
 print("Number of features: ",N_feature)
+#%%
+change_datatype(X)
+change_datatype_float(X)
+
+change_datatype(test)
+change_datatype_float(test)
+
+#%%
 # We could use CV to improve the result
 # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=2015)
 
@@ -86,6 +112,7 @@ print(bestParam)
 
 #%%
 pred = model.predict(test)
+del test
 
 #%% Write results
 

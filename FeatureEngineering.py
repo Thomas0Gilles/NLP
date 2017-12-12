@@ -2,6 +2,7 @@
 import pandas as pd
 print(pd.__version__)
 import numpy as np
+from sklearn import preprocessing
 
 #%%
 def change_datatype(df):
@@ -94,9 +95,12 @@ for column in cat_features:
 	df_comb = pd.concat([df_comb,temp],axis=1)
 	df_comb = df_comb.drop([column],axis=1)
 
+col_to_scale = ['long_time_user','reg_mem_duration','registration_duration','membership_duration','discount','amt_per_day','bd','payment_plan_days','plan_list_price','actual_amount_paid']
+df_comb[col_to_scale] = preprocessing.scale(df_comb[col_to_scale])
+
 change_datatype(df_comb)
 change_datatype_float(df_comb)
 
 #%%
 print("Write ...")
-df_comb.to_csv('../data/trans_mem.csv')
+df_comb.to_csv('../data/trans_mem_scaled.csv')

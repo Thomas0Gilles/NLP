@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from multiprocessing import Pool, cpu_count
 import gc; gc.enable()
+from sklearn import preprocessing
 
 def transform_df(df):
     df = pd.DataFrame(df)
@@ -16,6 +17,7 @@ def transform_df2(df):
     df = df.drop_duplicates(subset=['msno'], keep='first')
     return df
 
+#%%
 print('Import')
 
 df_iter = pd.read_csv('../data/user_logs.csv', low_memory=False, iterator=True, chunksize=10000000)
@@ -31,8 +33,7 @@ for df in df_iter:
         df = transform_df2(df)
         p.close(); p.join()
         last_user_logs.append(df)
-        print('...', df.shape)
-        print('Global shape: ', last_user_logs.shape)
+        print('...', df.shape, '  Global shape: ', last_user_logs.shape)
         df = []
 print('Concat')
 last_user_logs.append(transform_df(pd.read_csv('../data/user_logs_v2.csv')))
@@ -40,24 +41,33 @@ last_user_logs = pd.concat(last_user_logs, axis=0, ignore_index=True).reset_inde
 last_user_logs = transform_df2(last_user_logs)
 print("Before selection: ",last_user_logs.shape)
 
+#%%
 print('Conversion')
 date_cols = ['date']
 for col in date_cols:
     last_user_logs[col] = pd.to_datetime(last_user_logs[col], format='%Y%m%d')
 
+#%%
 print('Selection')
 Fe2017 = pd.to_datetime(20170102, format='%Y%m%d')
 last_user_logs = last_user_logs[last_user_logs['date'] >= Fe2017]
+
 #Je sais pas si c'ets vraiment biend e drop la date mais je ne voi pas comment un NN l'exploite. Donc je drop toutes les dates
 last_user_logs = last_user_logs.drop(['date'], axis=1)
 print("After selection: ",last_user_logs.shape)
 
+#%%
 print('Aggregation')
 last_user_logs = last_user_logs.groupby(last_user_logs.msno).agg({'num_25': ['sum','std','median','mean','nunique'], 'num_50':['sum','std','median','mean'],'num_75':['sum','std','median','mean'],'num_985':['sum','std','median','mean'], 'num_100':['sum','std','median','mean'],'num_unq':['sum','std','median','mean'], 'total_secs':['sum','std','median','mean']})
 last_user_logs['msno'] = last_user_logs.index.values
 print("At the end: ",last_user_logs.shape)
 
+#%%
+col_to_scale = last_user_logs.columns.difference(['msno'])
+last_user_logs[col_to_scale] = preprocessing.scale(last_user_logs[col_to_scale])
+
+#%%
 print("Write ...")
-last_user_logs.to_csv('../data/user_FE.csv')
+last_user_logs.to_csv('../data/user_FE_scaled.csv')
 
 
