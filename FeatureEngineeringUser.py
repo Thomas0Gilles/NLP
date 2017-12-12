@@ -59,14 +59,14 @@ print("After selection: ",last_user_logs.shape)
 #%%
 print('Aggregation')
 last_user_logs = last_user_logs.groupby(last_user_logs.msno).agg({'num_25': ['sum','std','median','mean','nunique'], 'num_50':['sum','std','median','mean'],'num_75':['sum','std','median','mean'],'num_985':['sum','std','median','mean'], 'num_100':['sum','std','median','mean'],'num_unq':['sum','std','median','mean'], 'total_secs':['sum','std','median','mean']})
-last_user_logs['msno'] = last_user_logs.index.values
-print("At the end: ",last_user_logs.shape)
 
 #%%
-col_to_scale = last_user_logs.columns.difference(['msno'])
-print(col_to_scale)
+print('Scale')
 print(last_user_logs.dtypes)
-last_user_logs[col_to_scale] = preprocessing.scale(last_user_logs[col_to_scale])
+last_user_logs = preprocessing.scale(last_user_logs)
+
+last_user_logs['msno'] = last_user_logs.index.values
+print("At the end: ",last_user_logs.shape)
 
 #%%
 print("Write ...")
