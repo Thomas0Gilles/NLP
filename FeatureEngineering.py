@@ -2,7 +2,6 @@
 import pandas as pd
 print(pd.__version__)
 import numpy as np
-from sklearn import preprocessing
 
 #%%
 def change_datatype(df):
