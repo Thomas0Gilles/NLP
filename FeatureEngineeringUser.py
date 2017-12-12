@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from multiprocessing import Pool, cpu_count
 import gc; gc.enable()
-from sklearn import preprocessing
 
 def transform_df(df):
     df = pd.DataFrame(df)
@@ -62,8 +61,9 @@ last_user_logs = last_user_logs.groupby(last_user_logs.msno).agg({'num_25': ['su
 
 #%%
 print('Scale')
-print(last_user_logs.dtypes)
-last_user_logs = preprocessing.scale(last_user_logs)
+for c in last_user_logs.columns:
+    moy = np.nanmean(last_user_logs[c])
+    last_user_logs[c] = (last_user_logs[c] - moy)/np.sqrt(np.nansum(np.square(last_user_logs[c] - moy)))
 
 last_user_logs['msno'] = last_user_logs.index.values
 print("At the end: ",last_user_logs.shape)
