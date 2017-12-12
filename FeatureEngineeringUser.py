@@ -64,6 +64,8 @@ print("At the end: ",last_user_logs.shape)
 
 #%%
 col_to_scale = last_user_logs.columns.difference(['msno'])
+print(col_to_scale)
+print(last_user_logs.dtypes)
 last_user_logs[col_to_scale] = preprocessing.scale(last_user_logs[col_to_scale])
 
 #%%
