@@ -1,6 +1,7 @@
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.wrappers.scikit_learn import KerasClassifier
+from keras.layers import Input
 from sklearn.model_selection import GridSearchCV
 import numpy as np
 import pandas as pd
@@ -108,7 +109,10 @@ param_grid = dict(optimizer=optimizers, epochs=epochs, batch_size=batches, init=
 clf = GridSearchCV(estimator=model, param_grid=param_grid)
 
 #%% Fitting
-clf.fit(X, y)
+X_input = Input(shape=X.shape, name='X_input')
+y_input = Input(shape=y.shape, name='y_input')
+
+clf.fit(X_input, y_input)
 clf.refit
 del X
 del y
