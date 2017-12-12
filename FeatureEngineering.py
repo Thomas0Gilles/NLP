@@ -30,7 +30,10 @@ df_transactions = pd.concat((df_transactions, pd.read_csv('../data/transactions_
 change_datatype(df_transactions)
 change_datatype_float(df_transactions)
 
+
+
 #%% Creating new feature
+df_transactions['trans_count'] = df_transactions.groupby(df_transactions.msno).agg({'payment_method_id':'nunique'})
 df_transactions['discount'] = df_transactions['plan_list_price'] - df_transactions['actual_amount_paid']
 df_transactions['is_discount'] = df_transactions.discount.apply(lambda x: 1 if x > 0 else 0)
 df_transactions['amt_per_day'] = df_transactions['actual_amount_paid'] / df_transactions['payment_plan_days']
@@ -97,7 +100,7 @@ for column in cat_features:
 	df_comb = df_comb.drop([column],axis=1)
 
 print('Scaling')
-col_to_scale = ['long_time_user','reg_mem_duration','registration_duration','membership_duration','discount','amt_per_day','bd','payment_plan_days','plan_list_price','actual_amount_paid']
+col_to_scale = ['trans_count','long_time_user','reg_mem_duration','registration_duration','membership_duration','discount','amt_per_day','bd','payment_plan_days','plan_list_price','actual_amount_paid']
 for c in col_to_scale:
     moy = np.nanmean(df_comb[c])
     df_comb[c] = (df_comb[c] - moy)/np.sqrt(np.nansum(np.square(df_comb[c] - moy)))
