@@ -87,15 +87,14 @@ def create_model(optimizer='rmsprop', init='glorot_uniform'):
 	model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 	return model
 
-#Attention à la signification de Nb_node_hidde_layer
-def create_model_complex(optimizer='rmsprop', init='glorot_uniform', Nnode = 110, Nnodehiddelayer = [15]):
-    model = Sequential()
-    model.add(Dense(Nnode, input_dim=N_feature, kernel_initializer=init, activation='relu'))
-    for n in Nnodehiddelayer:
-       model.add(Dense(n, kernel_initializer=init, activation='relu'))
-    model.add(Dense(1, kernel_initializer=init, activation='sigmoid'))
-    model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
-    return model
+#def create_model_complex(optimizer='rmsprop', init='glorot_uniform', Nnode = 110, Nnodehiddelayer = [15]):
+#    model = Sequential()
+#    model.add(Dense(Nnode, input_dim=N_feature, kernel_initializer=init, activation='relu'))
+#    for n in Nnodehiddelayer:
+#       model.add(Dense(n, kernel_initializer=init, activation='relu'))
+#    model.add(Dense(1, kernel_initializer=init, activation='sigmoid'))
+#    model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+#    return model
 
 model = KerasClassifier(build_fn=create_model, verbose=0)
 
