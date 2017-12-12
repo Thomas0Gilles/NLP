@@ -80,8 +80,8 @@ test = test.fillna(0)
 def create_model(optimizer='rmsprop', init='glorot_uniform'):
 	# create model
 	model = Sequential()
-	model.add(Dense(12, input_dim=N_feature, kernel_initializer=init, activation='relu'))
-	model.add(Dense(8, kernel_initializer=init, activation='relu'))
+	model.add(Dense(110, input_dim=N_feature, kernel_initializer=init, activation='relu'))
+	model.add(Dense(15, kernel_initializer=init, activation='relu'))
 	model.add(Dense(1, kernel_initializer=init, activation='sigmoid'))
 	# Compile model
 	model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
