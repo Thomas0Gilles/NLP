@@ -1,13 +1,7 @@
 ﻿TODO:
--> Ajout d'un scaling des valeurs pour les données
--> Tester différentes architectures (le mettre dans la grid)
--> Gérer les variables catégorielles
+-> Faire fonctionner NNKeras
 
-NNKeras:
--> Ajouter un scaling des valeurs 
-
-FeatureEngineeringUser:
--> Voir si un autre FE est mieux, réfléchir en détail
-
-FeatureEngineering:
--> Réfléchir à d'autres possibilités
+Objectifs:
+-> FeatureEngineeringUser: trouver d'autres features
+-> FeatureEngineering: trouver d'autres features
+-> NNKeras: debug et optimisation de la grid
