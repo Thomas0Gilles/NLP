@@ -33,7 +33,7 @@ for df in df_iter:
         df = transform_df2(df)
         p.close(); p.join()
         last_user_logs.append(df)
-        print('...', df.shape, '  Global shape: ', last_user_logs.shape)
+        print('...', df.shape)
         df = []
 print('Concat')
 last_user_logs.append(transform_df(pd.read_csv('../data/user_logs_v2.csv')))
