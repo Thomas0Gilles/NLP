@@ -36,7 +36,7 @@ test = pd.read_csv('../data/sample_submission_v2.csv')
 
 #%% Merge trans_mem
 print("Loading 2 ...")
-transmem = pd.read_csv('../data/trans_mem_scaled.csv', usecols=['msno'])
+transmem = pd.read_csv('../data/trans_mem_scaled.csv')
 
 train = pd.merge(train, transmem, how='left', on='msno')
 test = pd.merge(test, transmem, how='left', on='msno')
@@ -44,7 +44,7 @@ del transmem
 
 #%% Merge user_FE
 print("Loading 3 ...")
-userFE = pd.read_csv('../data/user_FE_scaled.csv', usecols=['msno'])
+userFE = pd.read_csv('../data/user_FE_scaled.csv')
 
 train = pd.merge(train, userFE, how='left', on='msno')
 test = pd.merge(test, userFE, how='left', on='msno')
@@ -97,7 +97,7 @@ def create_model(optimizer='rmsprop', init='glorot_uniform'):
 #    model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 #    return model
 
-model = KerasClassifier(build_fn=create_model, verbose=0)
+model = KerasClassifier(build_fn=create_model, verbose=1)
 
 #%% grid search epochs, batch size and optimizer
 optimizers = ['rmsprop', 'adam']
