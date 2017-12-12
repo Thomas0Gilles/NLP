@@ -38,6 +38,8 @@ print('Shape : ', train.shape)
 #%% Merge trans_mem
 print("Loading 2 ...")
 transmem = pd.read_csv('../data/trans_mem_scaled.csv', usecols=['msno'])
+print('Shape trans : ',transmem.shape)
+print('Columns values :',transmem.columns.values)
 
 train = pd.merge(train, transmem, how='left', on='msno')
 test = pd.merge(test, transmem, how='left', on='msno')
