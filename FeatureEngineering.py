@@ -105,7 +105,7 @@ for column in cat_features:
 print('Scaling')
 col_to_scale = ['trans_count','long_time_user','reg_mem_duration','registration_duration','membership_duration','discount','amt_per_day','bd','payment_plan_days','plan_list_price','actual_amount_paid']
 for c in col_to_scale:
-    print("Column ",c," has ",sum(np.isnan(df_comb[c]))," nan values sur ",df_comb.shape[0]," !")
+    #print("Column ",c," has ",sum(np.isnan(df_comb[c]))," nan values sur ",df_comb.shape[0]," !")
     moy = np.nanmean(df_comb[c])
     df_comb[c] = (df_comb[c] - moy)/np.sqrt(np.nansum(np.square(df_comb[c] - moy)))
 
