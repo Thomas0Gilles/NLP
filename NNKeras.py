@@ -111,11 +111,13 @@ clf = GridSearchCV(estimator=model, param_grid=param_grid)
 #%% Fitting
 X_input = Input(shape=X.shape, name='X_input')
 y_input = Input(shape=y.shape, name='y_input')
+del X
+del y
 
 clf.fit(X_input, y_input)
 clf.refit
-del X
-del y
+del X_input
+del y_input
 
 #%% Export best param
 bestParam = clf.best_params_
