@@ -42,7 +42,7 @@ del transmem
 
 #%% Merge user_FE
 print("Loading 3 ...")
-userFE = pd.read_csv('../data/user_FE_scaled.csv', usecols=['msno'])
+userFE = pd.read_csv('../data/user_FE.csv', usecols=['msno'])
 
 train = pd.merge(train, userFE, how='left', on='msno')
 test = pd.merge(test, userFE, how='left', on='msno')
