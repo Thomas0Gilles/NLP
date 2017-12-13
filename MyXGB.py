@@ -32,6 +32,15 @@ train = pd.read_csv('../data/train.csv')
 train = pd.concat((train, pd.read_csv('../data/train_v2.csv')), axis=0, ignore_index=True).reset_index(drop=True)
 test = pd.read_csv('../data/sample_submission_v2.csv')
 
+#%% Merge user_FE
+print("Loading 3 ...")
+userFE = pd.read_csv('../data/user_FE.csv')
+userFE = userFE.drop(['mnso.1'], axis=1)
+
+train = pd.merge(train, userFE, how='left', on='msno')
+test = pd.merge(test, userFE, how='left', on='msno')
+del userFE
+
 #%% Merge trans_mem
 print("Loading 2 ...")
 transmem = pd.read_csv('../data/trans_mem.csv')
@@ -39,14 +48,6 @@ transmem = pd.read_csv('../data/trans_mem.csv')
 train = pd.merge(train, transmem, how='left', on='msno')
 test = pd.merge(test, transmem, how='left', on='msno')
 del transmem
-
-#%% Merge user_FE
-print("Loading 3 ...")
-userFE = pd.read_csv('../data/user_FE.csv')
-
-train = pd.merge(train, userFE, how='left', on='msno')
-test = pd.merge(test, userFE, how='left', on='msno')
-del userFE
 
 #%% Replace na by 0, extract the columns used for prediction
 train = train.fillna(0)
