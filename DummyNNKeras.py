@@ -53,9 +53,7 @@ print('Shape : ', train.shape)
 
 #%% Merge user_FE
 #print("Loading 3 ...")
-#userFE = pd.read_csv('../data/user_FE_scaled.csv',dtype={'num_985':np.float32,'num_985.1':np.float32,
-#                                                              'num_985.2':np.float32,'num_985.3':np.float32, 'num_50':np.float32,'num_50.1':np.float32,
-#                                                              'num_50.2':np.float32,'num_50.3':np.float32})
+#userFE = pd.read_csv('../data/user_FE_scaled.csv')
 #
 #train = pd.merge(train, userFE, how='left', on='msno')
 #test = pd.merge(test, userFE, how='left', on='msno')
@@ -119,6 +117,7 @@ predictions = Dense(1, activation='sigmoid')(x)
 # This creates a model that includes
 # the Input layer and three Dense layers
 model = Model(inputs=inputs, outputs=predictions)
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 #%%
 model.fit(X, y, epochs=5, batch_size=32)
