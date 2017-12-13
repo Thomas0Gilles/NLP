@@ -1,6 +1,7 @@
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.wrappers.scikit_learn import KerasClassifier
+from keras.models import Model
 from keras.layers import Input
 from sklearn.model_selection import GridSearchCV
 import numpy as np
@@ -52,7 +53,9 @@ print('Shape : ', train.shape)
 
 #%% Merge user_FE
 print("Loading 3 ...")
-userFE = pd.read_csv('../data/user_FE_scaled.csv')
+userFE = pd.read_csv('../data/user_FE_scaled.csv',dtype={'num_985':np.float32,'num_985.1':np.float32,
+                                                              'num_985.2':np.float32,'num_985.3':np.float32, 'num_50':np.float32,'num_50.1':np.float32,
+                                                              'num_50.2':np.float32,'num_50.3':np.float32})
 
 train = pd.merge(train, userFE, how='left', on='msno')
 test = pd.merge(test, userFE, how='left', on='msno')
@@ -65,7 +68,6 @@ X = train.drop(['is_churn','msno'], axis=1)
 del train
 N_feature = X.shape[1]
 print('Shape : ', X.shape)
-print("Number of features: ",N_feature)
 
 result = pd.DataFrame()
 result['msno'] = test['msno']
@@ -83,11 +85,13 @@ change_datatype_float(test)
 
 X = X.fillna(0)
 test = test.fillna(0)
+print('Shape train : ', X.shape)
+print('Shape test : ', test.shape)
 
-X_input = Input(shape=X.shape, name='X_input')
-y_input = Input(shape=y.shape, name='y_input')
-del X
-del y
+#X_input = Input(shape=X.shape, name='X_input')
+#y_input = Input(shape=y.shape, name='y_input')
+#del X
+#del y
 
 
 #%%
@@ -95,19 +99,36 @@ del y
 # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=2015)
 
 #%%
-model = Sequential()
-model.add(Dense(110, input_dim=N_feature, kernel_initializer='glorot_uniform', activation='relu'))
-model.add(Dense(15, kernel_initializer='glorot_uniform', activation='relu'))
-model.add(Dense(1, kernel_initializer='glorot_uniform', activation='sigmoid'))
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+#model = Sequential()
+#model.add(Dense(int(110), input_dim=int(N_feature), kernel_initializer='glorot_uniform', activation='relu'))
+#model.add(Dense(int(15), kernel_initializer='glorot_uniform', activation='relu'))
+#model.add(Dense(int(1), kernel_initializer='glorot_uniform', activation='sigmoid'))
+#model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+
+
+
+
+inputs = Input(shape=(int(N_feature),))
+
+# a layer instance is callable on a tensor, and returns a tensor
+x = Dense(110, kernel_initializer='glorot_uniform', activation='relu')(inputs)
+x = Dense(15, kernel_initializer='glorot_uniform', activation='relu')(x)
+predictions = Dense(1, activation='sigmoid')(x)
+
+# This creates a model that includes
+# the Input layer and three Dense layers
+model = Model(inputs=inputs, outputs=predictions)
 
 #%%
-model.fit(X_input, y_input, epochs=5, batch_size=32)
-del X_input
-del y_input
+model.fit(X, y, epochs=5, batch_size=32)
+#model.fit(X_input, y_input, epochs=5, batch_size=int(32))
+#del X_input
+#del y_input
 
 #%%
 pred = model.predict(test, batch_size=32)
+#pred = model.predict(test, batch_size=int(32))
 del test
 
 #%%
