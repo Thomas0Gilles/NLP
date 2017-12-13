@@ -35,7 +35,17 @@ test = pd.read_csv('../data/sample_submission_v2.csv')
 #%% Merge user_FE
 print("Loading 3 ...")
 userFE = pd.read_csv('../data/user_FE.csv')
-userFE = userFE.drop(['mnso.1'], axis=1)
+#userFE = userFE.drop(['mnso.1'], axis=1)
+change_datatype_float(userFE)
+change_datatype(userFE)
+
+#from sklearn import preprocessing 
+for f in userFE.columns: 
+    if userFE[f].dtype=='object': 
+        print("type object pour ", f)
+#        lbl = preprocessing.LabelEncoder() 
+#        lbl.fit(list(train[f].values)) 
+#        train[f] = lbl.transform(list(train[f].values))
 
 train = pd.merge(train, userFE, how='left', on='msno')
 test = pd.merge(test, userFE, how='left', on='msno')
@@ -44,6 +54,16 @@ del userFE
 #%% Merge trans_mem
 print("Loading 2 ...")
 transmem = pd.read_csv('../data/trans_mem.csv')
+change_datatype_float(transmem)
+change_datatype(transmem)
+
+#from sklearn import preprocessing 
+for f in transmem.columns: 
+    if transmem[f].dtype=='object': 
+        print("type object pour ", f)
+#        lbl = preprocessing.LabelEncoder() 
+#        lbl.fit(list(train[f].values)) 
+#        train[f] = lbl.transform(list(train[f].values))
 
 train = pd.merge(train, transmem, how='left', on='msno')
 test = pd.merge(test, transmem, how='left', on='msno')
