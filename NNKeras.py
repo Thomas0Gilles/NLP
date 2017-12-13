@@ -35,17 +35,17 @@ train = pd.concat((train, pd.read_csv('../data/train_v2.csv')), axis=0, ignore_i
 test = pd.read_csv('../data/sample_submission_v2.csv')
 
 #%% Merge trans_mem
-print("Loading 2 ...")
-transmem = pd.read_csv('../data/trans_mem_scaled.csv', dtype={'Unnamed: 0':np.int32,'payment_plan_days':np.float32,'plan_list_price':np.float32,
-                                                              'actual_amount_paid':np.float32,'is_auto_renew': np.int8, 'is_cancel': np.float32,
-                                                              'trans_count':np.float32,'discount':np.float32,'is_discount':np.int8,'amt_per_day': np.float32,
-                                                              'membership_duration':np.float32,'bd':np.float32,'registration_duration': np.float32,'reg_mem_duration':np.float32,
-                                                              'autorenew_&_not_cancel':np.int8,'notAutorenew_&_cancel': np.int8,'long_time_user':np.float32,'2':np.int8})
-
-
-train = pd.merge(train, transmem, how='left', on='msno')
-test = pd.merge(test, transmem, how='left', on='msno')
-del transmem
+#print("Loading 2 ...")
+#transmem = pd.read_csv('../data/trans_mem_scaled.csv', dtype={'Unnamed: 0':np.int32,'payment_plan_days':np.float32,'plan_list_price':np.float32,
+#                                                              'actual_amount_paid':np.float32,'is_auto_renew': np.int8, 'is_cancel': np.float32,
+#                                                              'trans_count':np.float32,'discount':np.float32,'is_discount':np.int8,'amt_per_day': np.float32,
+#                                                              'membership_duration':np.float32,'bd':np.float32,'registration_duration': np.float32,'reg_mem_duration':np.float32,
+#                                                              'autorenew_&_not_cancel':np.int8,'notAutorenew_&_cancel': np.int8,'long_time_user':np.float32,'2':np.int8})
+#
+#
+#train = pd.merge(train, transmem, how='left', on='msno')
+#test = pd.merge(test, transmem, how='left', on='msno')
+#del transmem
 
 #%% Merge user_FE
 print("Loading 3 ...")
@@ -77,9 +77,9 @@ change_datatype_float(test)
 X = X.fillna(0)
 test = test.fillna(0)
 
-X = X.values
-y = y.values 
-test = test.values
+#X = X.values
+#y = y.values 
+#test = test.values
 
 N_feature = X.shape[1]
 print("Number of features: ",N_feature)
