@@ -34,7 +34,7 @@ test = pd.read_csv('../data/sample_submission_v2.csv')
 
 #%% Merge trans_mem
 print("Loading 2 ...")
-transmem = pd.read_csv('../data/trans_mem.csv', usecols=['msno'])
+transmem = pd.read_csv('../data/trans_mem.csv')
 
 train = pd.merge(train, transmem, how='left', on='msno')
 test = pd.merge(test, transmem, how='left', on='msno')
@@ -42,7 +42,7 @@ del transmem
 
 #%% Merge user_FE
 print("Loading 3 ...")
-userFE = pd.read_csv('../data/user_FE.csv', usecols=['msno'])
+userFE = pd.read_csv('../data/user_FE.csv')
 
 train = pd.merge(train, userFE, how='left', on='msno')
 test = pd.merge(test, userFE, how='left', on='msno')
