@@ -36,6 +36,12 @@ train = pd.concat((train, pd.read_csv('../data/train_v2.csv')), axis=0, ignore_i
 test = pd.read_csv('../data/sample_submission_v2.csv')
 print('Shape : ', train.shape)
 
+print("Load to delet")
+members = pd.read_csv('../data/members_v3.csv')
+train = pd.merge(train, members, how='left', on='msno')
+test = pd.merge(test, members, how='left', on='msno')
+
+
 #%% Merge trans_mem
 #print("Loading 2 ...")
 #transmem = pd.read_csv('../data/trans_mem_scaled.csv', dtype={'Unnamed: 0':np.int32,'payment_plan_days':np.float32,'plan_list_price':np.float32,
