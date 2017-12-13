@@ -68,6 +68,10 @@ result['msno'] = test['msno']
 test = test.drop(['msno','is_churn'], axis=1)
 test = test[X.columns]
 
+X = X.values
+y = y.values 
+test = test.values
+
 N_feature = X.shape[1]
 print("Number of features: ",N_feature)
 #%%
@@ -111,7 +115,7 @@ model = KerasClassifier(build_fn=create_model, verbose=1)
 optimizers = ['rmsprop', 'adam']
 init = ['glorot_uniform', 'normal', 'uniform']
 epochs = [50, 100, 150]
-batches = [5, 10, 20]
+batches = [1] #[5, 10, 20]
 param_grid = dict(optimizer=optimizers, epochs=epochs, batch_size=batches, init=init)
 
 clf = GridSearchCV(estimator=model, param_grid=param_grid)
