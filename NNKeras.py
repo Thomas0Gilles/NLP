@@ -48,7 +48,7 @@ test = pd.merge(test, transmem, how='left', on='msno')
 del transmem
 
 #%% Merge user_FE
-print("Loading 3 ...")
+#print("Loading 3 ...")
 #userFE = pd.read_csv('../data/user_FE_scaled.csv',dtype={'num_985':np.float32,'num_985.1':np.float32,
 #                                                              'num_985.2':np.float32,'num_985.3':np.float32, 'num_50':np.float32,'num_50.1':np.float32,
 #                                                              'num_50.2':np.float32,'num_50.3':np.float32})
@@ -117,15 +117,10 @@ param_grid = dict(optimizer=optimizers, epochs=epochs, batch_size=batches, init=
 clf = GridSearchCV(estimator=model, param_grid=param_grid)
 
 #%% Fitting
-X_input = Input(shape=X.shape, name='X_input')
-y_input = Input(shape=y.shape, name='y_input')
+clf.fit(X, y)
+clf.refit
 del X
 del y
-
-clf.fit(X_input, y_input)
-clf.refit
-del X_input
-del y_input
 
 #%% Export best param
 bestParam = clf.best_params_
