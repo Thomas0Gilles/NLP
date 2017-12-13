@@ -43,6 +43,8 @@ change_datatype(userFE)
 for f in userFE.columns: 
     if userFE[f].dtype=='object': 
         print("type object pour ", f)
+        if f!='msno':
+            userFE.drop([f],axis=1)
 #        lbl = preprocessing.LabelEncoder() 
 #        lbl.fit(list(train[f].values)) 
 #        train[f] = lbl.transform(list(train[f].values))
@@ -61,6 +63,8 @@ change_datatype(transmem)
 for f in transmem.columns: 
     if transmem[f].dtype=='object': 
         print("type object pour ", f)
+        if f!='msno':
+            transmem.drop([f],axis=1)
 #        lbl = preprocessing.LabelEncoder() 
 #        lbl.fit(list(train[f].values)) 
 #        train[f] = lbl.transform(list(train[f].values))
