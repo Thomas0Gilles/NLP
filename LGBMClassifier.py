@@ -44,15 +44,15 @@ test = pd.merge(test, transmem, how='left', on='msno')
 del transmem
 
 #%% Merge user_FE
-print("Loading 3 ...")
-userFE = pd.read_csv('../data/user_FE.csv',dtype={'num_985':np.float32,'num_985.1':np.float32,
-                                                              'num_985.2':np.float32,'num_985.3':np.float32, 'num_50':np.float32,'num_50.1':np.float32,
-                                                              'num_50.2':np.float32,'num_50.3':np.float32})
-
-
-train = pd.merge(train, userFE, how='left', on='msno')
-test = pd.merge(test, userFE, how='left', on='msno')
-del userFE
+#print("Loading 3 ...")
+#userFE = pd.read_csv('../data/user_FE.csv',dtype={'num_985':np.float32,'num_985.1':np.float32,
+#                                                              'num_985.2':np.float32,'num_985.3':np.float32, 'num_50':np.float32,'num_50.1':np.float32,
+#                                                              'num_50.2':np.float32,'num_50.3':np.float32})
+#
+#
+#train = pd.merge(train, userFE, how='left', on='msno')
+#test = pd.merge(test, userFE, how='left', on='msno')
+#del userFE
 
 #%% Create data & label
 y = train['is_churn']
