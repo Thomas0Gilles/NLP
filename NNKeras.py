@@ -60,8 +60,6 @@ y = train['is_churn']
 X = train.drop(['is_churn','msno'], axis=1)
 del train
 
-result = pd.DataFrame()
-result['msno'] = test['msno']
 colX = X.columns
 
 
@@ -152,6 +150,9 @@ userFE = pd.read_csv('../data/user_FE_scaled.csv',dtype={'num_985':np.float32,'n
 
 test = pd.merge(test, userFE, how='left', on='msno')
 del userFE
+
+result = pd.DataFrame()
+result['msno'] = test['msno']
 
 test = test.drop(['msno','is_churn'], axis=1)
 test = test.fillna(0)
