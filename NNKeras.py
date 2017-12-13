@@ -1,7 +1,6 @@
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.wrappers.scikit_learn import KerasClassifier
-from keras.layers import Input
 from sklearn.model_selection import GridSearchCV
 import numpy as np
 import pandas as pd
@@ -32,20 +31,19 @@ def change_datatype_float(df):
 print("Loading 1 ...")
 train = pd.read_csv('../data/train.csv')
 train = pd.concat((train, pd.read_csv('../data/train_v2.csv')), axis=0, ignore_index=True).reset_index(drop=True)
-test = pd.read_csv('../data/sample_submission_v2.csv')
+
 
 #%% Merge trans_mem
-#print("Loading 2 ...")
-#transmem = pd.read_csv('../data/trans_mem_scaled.csv', dtype={'Unnamed: 0':np.int32,'payment_plan_days':np.float32,'plan_list_price':np.float32,
-#                                                              'actual_amount_paid':np.float32,'is_auto_renew': np.int8, 'is_cancel': np.float32,
-#                                                              'trans_count':np.float32,'discount':np.float32,'is_discount':np.int8,'amt_per_day': np.float32,
-#                                                              'membership_duration':np.float32,'bd':np.float32,'registration_duration': np.float32,'reg_mem_duration':np.float32,
-#                                                              'autorenew_&_not_cancel':np.int8,'notAutorenew_&_cancel': np.int8,'long_time_user':np.float32,'2':np.int8})
-#
-#
-#train = pd.merge(train, transmem, how='left', on='msno')
-#test = pd.merge(test, transmem, how='left', on='msno')
-#del transmem
+print("Loading 2 ...")
+transmem = pd.read_csv('../data/trans_mem_scaled.csv', dtype={'Unnamed: 0':np.int32,'payment_plan_days':np.float32,'plan_list_price':np.float32,
+                                                              'actual_amount_paid':np.float32,'is_auto_renew': np.int8, 'is_cancel': np.float32,
+                                                              'trans_count':np.float32,'discount':np.float32,'is_discount':np.int8,'amt_per_day': np.float32,
+                                                              'membership_duration':np.float32,'bd':np.float32,'registration_duration': np.float32,'reg_mem_duration':np.float32,
+                                                              'autorenew_&_not_cancel':np.int8,'notAutorenew_&_cancel': np.int8,'long_time_user':np.float32,'2':np.int8})
+
+
+train = pd.merge(train, transmem, how='left', on='msno')
+del transmem
 
 #%% Merge user_FE
 print("Loading 3 ...")
@@ -55,7 +53,6 @@ userFE = pd.read_csv('../data/user_FE_scaled.csv',dtype={'num_985':np.float32,'n
 
 
 train = pd.merge(train, userFE, how='left', on='msno')
-test = pd.merge(test, userFE, how='left', on='msno')
 del userFE
 
 #%% Create data & label
@@ -65,21 +62,18 @@ del train
 
 result = pd.DataFrame()
 result['msno'] = test['msno']
-test = test.drop(['msno','is_churn'], axis=1)
-test = test[X.columns]
+colX = X.columns
+
 
 change_datatype(X)
 change_datatype_float(X)
 
-change_datatype(test)
-change_datatype_float(test)
+
 
 X = X.fillna(0)
-test = test.fillna(0)
 
-#X = X.values
-#y = y.values 
-#test = test.values
+X = X.values
+y = y.values 
 
 N_feature = X.shape[1]
 print("Number of features: ",N_feature)
@@ -138,6 +132,36 @@ dfg.close()
 print(bestParam)
 
 #%%
+print("Loading 1 ...")
+test = pd.read_csv('../data/sample_submission_v2.csv')
+print("Loading 2 ...")
+transmem = pd.read_csv('../data/trans_mem_scaled.csv', dtype={'Unnamed: 0':np.int32,'payment_plan_days':np.float32,'plan_list_price':np.float32,
+                                                              'actual_amount_paid':np.float32,'is_auto_renew': np.int8, 'is_cancel': np.float32,
+                                                              'trans_count':np.float32,'discount':np.float32,'is_discount':np.int8,'amt_per_day': np.float32,
+                                                              'membership_duration':np.float32,'bd':np.float32,'registration_duration': np.float32,'reg_mem_duration':np.float32,
+                                                              'autorenew_&_not_cancel':np.int8,'notAutorenew_&_cancel': np.int8,'long_time_user':np.float32,'2':np.int8})
+
+
+test = pd.merge(test, transmem, how='left', on='msno')
+del transmem
+print("Loading 3 ...")
+userFE = pd.read_csv('../data/user_FE_scaled.csv',dtype={'num_985':np.float32,'num_985.1':np.float32,
+                                                              'num_985.2':np.float32,'num_985.3':np.float32, 'num_50':np.float32,'num_50.1':np.float32,
+                                                             'num_50.2':np.float32,'num_50.3':np.float32})
+
+
+test = pd.merge(test, userFE, how='left', on='msno')
+del userFE
+
+test = test.drop(['msno','is_churn'], axis=1)
+test = test.fillna(0)
+test = test[colX]
+
+change_datatype(test)
+change_datatype_float(test)
+
+test = test.values
+
 pred = model.predict(test)
 del test
 
