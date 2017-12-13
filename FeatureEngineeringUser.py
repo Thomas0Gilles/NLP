@@ -63,10 +63,10 @@ last_user_logs = last_user_logs.groupby(last_user_logs.msno).agg({'msno':'count'
 print('Scale')
 col = [str(i) for i in range(last_user_logs.shape[1])]
 last_user_logs.columns = col
-for c in last_user_logs.columns:
-    #print("Column ",c," has ",sum(np.isnan(last_user_logs[c]))," nan values sur ",last_user_logs.shape[0]," !")
-    moy = np.nanmean(last_user_logs[c])
-    last_user_logs[c] = (last_user_logs[c] - moy)/np.sqrt(np.nansum(np.square(last_user_logs[c] - moy)))
+#for c in last_user_logs.columns:
+#    #print("Column ",c," has ",sum(np.isnan(last_user_logs[c]))," nan values sur ",last_user_logs.shape[0]," !")
+#    moy = np.nanmean(last_user_logs[c])
+#    last_user_logs[c] = (last_user_logs[c] - moy)/np.sqrt(np.nansum(np.square(last_user_logs[c] - moy)))
 print("New value for column", last_user_logs.columns.values)
 
 last_user_logs['msno'] = last_user_logs.index.values
@@ -74,6 +74,6 @@ print("At the end: ",last_user_logs.shape)
 
 #%%
 print("Write ...")
-last_user_logs.to_csv('../data/user_FE_scaled.csv')
+last_user_logs.to_csv('../data/user_FE.csv')
 
 
