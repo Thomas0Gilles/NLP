@@ -61,7 +61,8 @@ last_user_logs = last_user_logs.groupby(last_user_logs.msno).agg({'msno':'count'
 
 #%%
 print('Scale')
-col = [str(i) for i in range(len(df.shape))]
+col = [str(i) for i in range(last_user_logs.shape[1])]
+last_user_logs.columns = col
 for c in last_user_logs.columns:
     #print("Column ",c," has ",sum(np.isnan(last_user_logs[c]))," nan values sur ",last_user_logs.shape[0]," !")
     moy = np.nanmean(last_user_logs[c])
