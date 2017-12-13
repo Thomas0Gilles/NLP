@@ -45,7 +45,7 @@ del transmem
 
 #%% Merge user_FE
 print("Loading 3 ...")
-userFE = pd.read_csv('../data/user_FE_scaled.csv',dtype={'num_985':np.float32,'num_985.1':np.float32,
+userFE = pd.read_csv('../data/user_FE.csv',dtype={'num_985':np.float32,'num_985.1':np.float32,
                                                               'num_985.2':np.float32,'num_985.3':np.float32, 'num_50':np.float32,'num_50.1':np.float32,
                                                               'num_50.2':np.float32,'num_50.3':np.float32})
 
