@@ -68,13 +68,6 @@ result['msno'] = test['msno']
 test = test.drop(['msno','is_churn'], axis=1)
 test = test[X.columns]
 
-X = X.values
-y = y.values 
-test = test.values
-
-N_feature = X.shape[1]
-print("Number of features: ",N_feature)
-#%%
 change_datatype(X)
 change_datatype_float(X)
 
@@ -83,6 +76,15 @@ change_datatype_float(test)
 
 X = X.fillna(0)
 test = test.fillna(0)
+
+X = X.values
+y = y.values 
+test = test.values
+
+N_feature = X.shape[1]
+print("Number of features: ",N_feature)
+#%%
+
 
 #%%
 # We could use CV to improve the result
