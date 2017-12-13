@@ -111,8 +111,8 @@ inputs = Input(shape=(int(N_feature),))
 
 # a layer instance is callable on a tensor, and returns a tensor
 x = Dense(110, kernel_initializer='glorot_uniform', activation='relu')(inputs)
-x = Dense(15, kernel_initializer='glorot_uniform', activation='relu')(x)
-predictions = Dense(1, activation='sigmoid')(x)
+hid = Dense(15, kernel_initializer='glorot_uniform', activation='relu')(x)
+predictions = Dense(1, activation='sigmoid')(hid)
 
 # This creates a model that includes
 # the Input layer and three Dense layers
