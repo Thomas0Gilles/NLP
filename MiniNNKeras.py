@@ -52,12 +52,6 @@ print("Loading 2 ...")
 #                                                              'membership_duration':np.float32,'bd':np.float32,'registration_duration': np.float32,'reg_mem_duration':np.float32,
 #                                                              'autorenew_&_not_cancel':np.int8,'notAutorenew_&_cancel': np.int8,'long_time_user':np.float32,'2':np.int8})
 #
-#for f in transmem.columns: 
-#    if transmem[f].dtype=='object': 
-#        print("type object pour ", f)
-#        if f!='msno':
-#            transmem.drop([f],axis=1)
-#
 #train = pd.merge(train, transmem, how='left', on='msno')
 #print("end merge")
 #del transmem
@@ -78,17 +72,9 @@ X = train.drop(['is_churn','msno','msno.1'], axis=1)
 print("end drop")
 del train
 
-for f in X.columns: 
-    if X[f].dtype=='object': 
-        print("type object pour ", f)
-        X.drop([f],axis=1)
-
-print(y.dtypes)
 print(X.dtypes)
 
-
 colX = X.columns
-
 
 change_datatype(X)
 change_datatype_float(X)
@@ -189,7 +175,7 @@ del userFE
 result = pd.DataFrame()
 result['msno'] = test['msno']
 
-test = test.drop(['msno','is_churn'], axis=1)
+test = test.drop(['msno','is_churn','msno.1'], axis=1)
 test = test.fillna(0)
 test = test[colX]
 
