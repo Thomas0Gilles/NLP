@@ -1,3 +1,11 @@
+def clearall():
+    all = [var for var in globals() if var[0] != "_"]
+    for var in all:
+        del globals()[var]
+        print("Var cleared")
+        
+clearall()
+
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.wrappers.scikit_learn import KerasClassifier
@@ -5,6 +13,8 @@ from sklearn.model_selection import GridSearchCV
 import numpy as np
 import pandas as pd
 import json
+
+
 
 # fix random seed for reproducibility
 seed = 2015
@@ -48,6 +58,7 @@ for f in transmem.columns:
             transmem.drop([f],axis=1)
 
 train = pd.merge(train, transmem, how='left', on='msno')
+print("end merge")
 del transmem
 
 #%% Merge user_FE
@@ -68,6 +79,7 @@ del transmem
 #%% Create data & label
 y = train['is_churn']
 X = train.drop(['is_churn','msno'], axis=1)
+print("end drop")
 del train
 
 colX = X.columns
