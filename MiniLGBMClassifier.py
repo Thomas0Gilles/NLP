@@ -49,19 +49,19 @@ test = pd.read_csv('../data/sample_submission_v2.csv')
 #test = pd.merge(test, transmem, how='left', on='msno')
 #del transmem
 
-print("Loading 2 ...")
-transmem = pd.read_csv('../data/trans_mem_unscaled_categorical.csv')
-
-
-for f in transmem.columns: 
-    if transmem[f].dtype=='object': 
-        print("type object pour ", f)
-        if f!='msno':
-            transmem.drop([f],axis=1)
-    
-train = pd.merge(train, transmem, how='left', on='msno')
-test = pd.merge(test, transmem, how='left', on='msno')
-del transmem
+#print("Loading 2 ...")
+#transmem = pd.read_csv('../data/trans_mem_unscaled_categorical.csv')
+#
+#
+#for f in transmem.columns: 
+#    if transmem[f].dtype=='object': 
+#        print("type object pour ", f)
+#        if f!='msno':
+#            transmem.drop([f],axis=1)
+#    
+#train = pd.merge(train, transmem, how='left', on='msno')
+#test = pd.merge(test, transmem, how='left', on='msno')
+#del transmem
 
 #%% Merge user_FE
 print("Loading 3 ...")
