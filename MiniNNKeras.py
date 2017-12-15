@@ -67,13 +67,18 @@ print("Loading 3 ...")
 userFE = pd.read_csv('../data/user_FE_scaled.csv',dtype={'num_985':np.float32,'num_985.1':np.float32,
                                                               'num_985.2':np.float32,'num_985.3':np.float32, 'num_50':np.float32,'num_50.1':np.float32,
                                                              'num_50.2':np.float32,'num_50.3':np.float32})
+
+col = userFE['mnso']
+col_to_drop = []
 for f in userFE.columns: 
     if userFE[f].dtype=='object': 
         print("type object pour ", f)
-        if f!='msno':
-            userFE.drop([f],axis=1)
-
-print(userFE.dtypes)    
+        col_to_drop.append(f)
+print("col to drop", col_to_drop)
+userFE.drop(col_to_drop,axis=1)
+userFE['mnso'] = col
+print(userFE.dtypes)  
+  
 
 train = pd.merge(train, userFE, how='left', on='msno')
 del userFE
