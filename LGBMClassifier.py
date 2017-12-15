@@ -39,16 +39,25 @@ transmem = pd.read_csv('../data/trans_mem.csv', dtype={'Unnamed: 0':np.int32,'pa
                                                               'autorenew_&_not_cancel':np.int8,'notAutorenew_&_cancel': np.int8,'long_time_user':np.float32,'2':np.int8})
 
 
+for f in transmem.columns: 
+    if transmem[f].dtype=='object': 
+        print("type object pour ", f)
+        if f!='msno':
+            transmem.drop([f],axis=1)
+    
 train = pd.merge(train, transmem, how='left', on='msno')
 test = pd.merge(test, transmem, how='left', on='msno')
 del transmem
 
 #%% Merge user_FE
 print("Loading 3 ...")
-userFE = pd.read_csv('../data/user_FE.csv',dtype={'num_985':np.float32,'num_985.1':np.float32,
-                                                              'num_985.2':np.float32,'num_985.3':np.float32, 'num_50':np.float32,'num_50.1':np.float32,
-                                                              'num_50.2':np.float32,'num_50.3':np.float32})
+userFE = pd.read_csv('../data/user_FE.csv')
 
+for f in userFE.columns: 
+    if userFE[f].dtype=='object': 
+        print("type object pour ", f)
+        if f!='msno':
+            userFE.drop([f],axis=1)
 
 train = pd.merge(train, userFE, how='left', on='msno')
 test = pd.merge(test, userFE, how='left', on='msno')
@@ -150,14 +159,14 @@ lgb_params2['bagging_freq'] = 1
 lgb_params2['seed'] = 200
 
 
-lgb_params3 = {}
-lgb_params3['n_estimators'] = 1100
-lgb_params3['max_depth'] = 4
-lgb_params3['num_iterations']=900
-lgb_params3['learning_rate'] = 0.02
-lgb_params3['feature_fraction'] = 0.9
-lgb_params3['bagging_freq'] = 1
-lgb_params3['seed'] = 200
+#lgb_params3 = {}
+#lgb_params3['n_estimators'] = 1100
+#lgb_params3['max_depth'] = 4
+#lgb_params3['num_iterations']=900
+#lgb_params3['learning_rate'] = 0.02
+#lgb_params3['feature_fraction'] = 0.9
+#lgb_params3['bagging_freq'] = 1
+#lgb_params3['seed'] = 200
 
 #%%
 
@@ -165,14 +174,14 @@ lgb_model = LGBMClassifier(**lgb_params)
 
 lgb_model2 = LGBMClassifier(**lgb_params2)
 
-lgb_model3 = LGBMClassifier(**lgb_params3)
+#lgb_model3 = LGBMClassifier(**lgb_params3)
 
 #%%
 log_model = LogisticRegression()
        
 stack = Ensemble(n_splits=6,
         stacker = log_model,
-        base_models = (lgb_model, lgb_model2, lgb_model3))        
+        base_models = (lgb_model, lgb_model2))#, lgb_model3))        
         
 y_pred = stack.fit_predict(X, y, test)
 

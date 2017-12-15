@@ -57,16 +57,18 @@ print("After selection: ",last_user_logs.shape)
 
 #%%
 print('Aggregation')
-last_user_logs = last_user_logs.groupby(last_user_logs.msno).agg({'msno':'count','num_25': [np.nansum,np.nanstd,np.nanmean,np.nanmedian], 'num_50':[np.nansum,np.nanstd,np.nanmean,np.nanmedian],'num_75':[np.nansum,np.nanstd,np.nanmean,np.nanmedian],'num_985':[np.nansum,np.nanstd,np.nanmean,np.nanmedian], 'num_100':[np.nansum,np.nanstd,np.nanmean,np.nanmedian],'num_unq':[np.nansum,np.nanstd,np.nanmean,np.nanmedian], 'total_secs':[np.nansum,np.nanstd,np.nanmean,np.nanmedian]})
+#last_user_logs = last_user_logs.groupby(last_user_logs.msno).agg({'msno':'count','num_25': [np.nansum,np.nanstd,np.nanmean,np.nanmedian], 'num_50':[np.nansum,np.nanstd,np.nanmean,np.nanmedian],'num_75':[np.nansum,np.nanstd,np.nanmean,np.nanmedian],'num_985':[np.nansum,np.nanstd,np.nanmean,np.nanmedian], 'num_100':[np.nansum,np.nanstd,np.nanmean,np.nanmedian],'num_unq':[np.nansum,np.nanstd,np.nanmean,np.nanmedian], 'total_secs':[np.nansum,np.nanstd,np.nanmean,np.nanmedian]})
+last_user_logs = last_user_logs.groupby(last_user_logs.msno).agg({'msno':'count','num_25': [np.nanstd,np.nanmean], 'num_50':[np.nanstd,np.nanmean],'num_75':[np.nanstd,np.nanmean],'num_985':[np.nanstd,np.nanmean], 'num_100':[np.nanstd,np.nanmean],'num_unq':[np.nanstd,np.nanmean], 'total_secs':[np.nansum]})
+
 
 #%%
 print('Scale')
 col = [str(i) for i in range(last_user_logs.shape[1])]
 last_user_logs.columns = col
-#for c in last_user_logs.columns:
-#    #print("Column ",c," has ",sum(np.isnan(last_user_logs[c]))," nan values sur ",last_user_logs.shape[0]," !")
-#    moy = np.nanmean(last_user_logs[c])
-#    last_user_logs[c] = (last_user_logs[c] - moy)/np.sqrt(np.nansum(np.square(last_user_logs[c] - moy)))
+for c in last_user_logs.columns:
+    #print("Column ",c," has ",sum(np.isnan(last_user_logs[c]))," nan values sur ",last_user_logs.shape[0]," !")
+    moy = np.nanmean(last_user_logs[c])
+    last_user_logs[c] = (last_user_logs[c] - moy)/np.sqrt(np.nansum(np.square(last_user_logs[c] - moy)))
 print("New value for column", last_user_logs.columns.values)
 
 last_user_logs['msno'] = last_user_logs.index.values
@@ -74,6 +76,6 @@ print("At the end: ",last_user_logs.shape)
 
 #%%
 print("Write ...")
-last_user_logs.to_csv('../data/user_FE.csv')
+last_user_logs.to_csv('../data/user_FE_small.csv')
 
 
