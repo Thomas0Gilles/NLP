@@ -31,37 +31,37 @@ train = pd.concat((train, pd.read_csv('../data/train_v2.csv')), axis=0, ignore_i
 test = pd.read_csv('../data/sample_submission_v2.csv')
 
 #%% Merge trans_mem
-print("Loading 2 ...")
-transmem = pd.read_csv('../data/trans_mem.csv', dtype={'Unnamed: 0':np.int32,'payment_plan_days':np.float32,'plan_list_price':np.float32,
-                                                              'actual_amount_paid':np.float32,'is_auto_renew': np.int8, 'is_cancel': np.float32,
-                                                              'trans_count':np.float32,'discount':np.float32,'is_discount':np.int8,'amt_per_day': np.float32,
-                                                              'membership_duration':np.float32,'bd':np.float32,'registration_duration': np.float32,'reg_mem_duration':np.float32,
-                                                              'autorenew_&_not_cancel':np.int8,'notAutorenew_&_cancel': np.int8,'long_time_user':np.float32,'2':np.int8})
-
-
-for f in transmem.columns: 
-    if transmem[f].dtype=='object': 
-        print("type object pour ", f)
-        if f!='msno':
-            transmem.drop([f],axis=1)
-    
-train = pd.merge(train, transmem, how='left', on='msno')
-test = pd.merge(test, transmem, how='left', on='msno')
-del transmem
-
-#%% Merge user_FE
-#print("Loading 3 ...")
-#userFE = pd.read_csv('../data/user_FE.csv')
+#print("Loading 2 ...")
+#transmem = pd.read_csv('../data/trans_mem.csv', dtype={'Unnamed: 0':np.int32,'payment_plan_days':np.float32,'plan_list_price':np.float32,
+#                                                              'actual_amount_paid':np.float32,'is_auto_renew': np.int8, 'is_cancel': np.float32,
+#                                                              'trans_count':np.float32,'discount':np.float32,'is_discount':np.int8,'amt_per_day': np.float32,
+#                                                              'membership_duration':np.float32,'bd':np.float32,'registration_duration': np.float32,'reg_mem_duration':np.float32,
+#                                                              'autorenew_&_not_cancel':np.int8,'notAutorenew_&_cancel': np.int8,'long_time_user':np.float32,'2':np.int8})
 #
-#for f in userFE.columns: 
-#    if userFE[f].dtype=='object': 
+#
+#for f in transmem.columns: 
+#    if transmem[f].dtype=='object': 
 #        print("type object pour ", f)
 #        if f!='msno':
-#            userFE.drop([f],axis=1)
-#
-#train = pd.merge(train, userFE, how='left', on='msno')
-#test = pd.merge(test, userFE, how='left', on='msno')
-#del userFE
+#            transmem.drop([f],axis=1)
+#    
+#train = pd.merge(train, transmem, how='left', on='msno')
+#test = pd.merge(test, transmem, how='left', on='msno')
+#del transmem
+
+#%% Merge user_FE
+print("Loading 3 ...")
+userFE = pd.read_csv('../data/user_FE.csv')
+
+for f in userFE.columns: 
+    if userFE[f].dtype=='object': 
+        print("type object pour ", f)
+        if f!='msno':
+            userFE.drop([f],axis=1)
+
+train = pd.merge(train, userFE, how='left', on='msno')
+test = pd.merge(test, userFE, how='left', on='msno')
+del userFE
 
 #%% Create data & label
 y = train['is_churn']
