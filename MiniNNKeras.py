@@ -42,6 +42,7 @@ print("Loading 1 ...")
 train = pd.read_csv('../data/train.csv')
 train = pd.concat((train, pd.read_csv('../data/train_v2.csv')), axis=0, ignore_index=True).reset_index(drop=True)
 
+print(train.dtypes)
 
 #%% Merge trans_mem
 print("Loading 2 ...")
@@ -71,7 +72,8 @@ for f in userFE.columns:
         print("type object pour ", f)
         if f!='msno':
             userFE.drop([f],axis=1)
-    
+
+print(userFE.dtypes)    
 
 train = pd.merge(train, userFE, how='left', on='msno')
 del userFE
@@ -81,6 +83,9 @@ y = train['is_churn']
 X = train.drop(['is_churn','msno'], axis=1)
 print("end drop")
 del train
+
+print(y.dtypes)
+print(X.dtypes)
 
 colX = X.columns
 
