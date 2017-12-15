@@ -65,12 +65,12 @@ del userFE
 
 #%% Create data & label
 y = train['is_churn']
-X = train.drop(['is_churn','msno'], axis=1)
+X = train.drop(['is_churn','msno','msno.1'], axis=1)
 del train
 
 result = pd.DataFrame()
 result['msno'] = test['msno']
-test = test.drop(['msno','is_churn'], axis=1)
+test = test.drop(['msno','is_churn','msno.1'], axis=1)
 test = test[X.columns]
 
 N_feature = X.shape[1]

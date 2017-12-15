@@ -44,6 +44,7 @@ for f in userFE.columns:
         if f!='msno':
             userFE.drop([f],axis=1)
 print(userFE.dtypes)
+userFE = userFE
 
 train = pd.merge(train, userFE, how='left', on='msno')
 test = pd.merge(test, userFE, how='left', on='msno')
@@ -69,7 +70,7 @@ del userFE
 train = train.fillna(0)
 test = test.fillna(0)
 
-cols = [c for c in train.columns if c not in ['is_churn','msno']]
+cols = [c for c in train.columns if c not in ['is_churn','msno','msno.1']]
 
 print("Number of features: ",len(cols))
 
