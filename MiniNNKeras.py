@@ -68,24 +68,13 @@ userFE = pd.read_csv('../data/user_FE_scaled.csv',dtype={'num_985':np.float32,'n
                                                               'num_985.2':np.float32,'num_985.3':np.float32, 'num_50':np.float32,'num_50.1':np.float32,
                                                              'num_50.2':np.float32,'num_50.3':np.float32})
 
-#col = userFE['msno']
-#col_to_drop = []
-#for f in userFE.columns: 
-#    if userFE[f].dtype=='object': 
-#        print("type object pour ", f)
-#        col_to_drop.append(f)
-#print("col to drop", col_to_drop)
-#userFE.drop(col_to_drop,axis=1)
-#userFE['msno'] = col
-#print(userFE.dtypes)  
-  
 
 train = pd.merge(train, userFE, how='left', on='msno')
 del userFE
 
 #%% Create data & label
 y = train['is_churn']
-X = train.drop(['is_churn','msno'], axis=1)
+X = train.drop(['is_churn','msno','msno.1'], axis=1)
 print("end drop")
 del train
 
