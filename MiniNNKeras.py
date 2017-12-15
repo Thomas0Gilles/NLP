@@ -68,7 +68,7 @@ userFE = pd.read_csv('../data/user_FE_scaled.csv',dtype={'num_985':np.float32,'n
                                                               'num_985.2':np.float32,'num_985.3':np.float32, 'num_50':np.float32,'num_50.1':np.float32,
                                                              'num_50.2':np.float32,'num_50.3':np.float32})
 
-col = userFE['mnso']
+col = userFE['msno']
 col_to_drop = []
 for f in userFE.columns: 
     if userFE[f].dtype=='object': 
@@ -76,7 +76,7 @@ for f in userFE.columns:
         col_to_drop.append(f)
 print("col to drop", col_to_drop)
 userFE.drop(col_to_drop,axis=1)
-userFE['mnso'] = col
+userFE['msno'] = col
 print(userFE.dtypes)  
   
 
