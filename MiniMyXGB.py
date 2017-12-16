@@ -32,6 +32,28 @@ train = pd.read_csv('../data/train.csv')
 train = pd.concat((train, pd.read_csv('../data/train_v2.csv')), axis=0, ignore_index=True).reset_index(drop=True)
 test = pd.read_csv('../data/sample_submission_v2.csv')
 
+
+
+#%% Merge trans_mem
+print("Loading 2 ...")
+transmem = pd.read_csv('../data/trans_mem_unscaled_categorical.csv', dtype={'Unnamed: 0':np.int32,'payment_plan_days':np.float32,'plan_list_price':np.float32,
+                                                              'actual_amount_paid':np.float32,'is_auto_renew': np.int8, 'is_cancel': np.int8,
+                                                              'trans_count':np.int32,'discount':np.float32,'is_discount':np.int8,'amt_per_day': np.float32,
+                                                              'membership_duration':np.float32,'bd':np.int8,'registration_duration': np.float32,'reg_mem_duration':np.float32,
+                                                              'autorenew_&_not_cancel':np.int8,'notAutorenew_&_cancel': np.int8,'long_time_user':np.int8})
+change_datatype_float(transmem)
+change_datatype(transmem)
+
+for f in transmem.columns: 
+    if transmem[f].dtype=='object': 
+        print("type object pour ", f)
+        if f!='msno':
+            transmem.drop([f],axis=1)
+
+train = pd.merge(train, transmem, how='left', on='msno')
+test = pd.merge(test, transmem, how='left', on='msno')
+del transmem
+
 #%% Merge user_FE
 print("Loading 3 ...")
 userFE = pd.read_csv('../data/user_FE.csv')
@@ -49,22 +71,6 @@ print(userFE.dtypes)
 train = pd.merge(train, userFE, how='left', on='msno')
 test = pd.merge(test, userFE, how='left', on='msno')
 del userFE
-
-#%% Merge trans_mem
-print("Loading 2 ...")
-transmem = pd.read_csv('../data/trans_mem_unscaled_categorical.csv')
-change_datatype_float(transmem)
-change_datatype(transmem)
-
-for f in transmem.columns: 
-    if transmem[f].dtype=='object': 
-        print("type object pour ", f)
-        if f!='msno':
-            transmem.drop([f],axis=1)
-
-train = pd.merge(train, transmem, how='left', on='msno')
-test = pd.merge(test, transmem, how='left', on='msno')
-del transmem
 
 #%% Replace na by 0, extract the columns used for prediction
 train = train.fillna(0)
