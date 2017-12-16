@@ -69,7 +69,8 @@ del transmem
 #%% Replace na by 0, extract the columns used for prediction
 train = train.fillna(0)
 test = test.fillna(0)
-
+print(train.dtypes)
+print(test.dtypes)
 cols = [c for c in train.columns if c not in ['is_churn','msno','msno.1']]
 
 print("Number of features: ",len(cols))
