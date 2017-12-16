@@ -73,13 +73,19 @@ del userFE
 
 
 #%% Replace na by 0, extract the columns used for prediction
+result = pd.DataFrame()
+result['msno'] = test['msno']
+labels = train['msno']
+
+train = train.drop(['msno','is_churn'],axis=1)
+test = test.drop(['msno','is_churn'],axis=1)
+
 train = train.fillna(0)
 test = test.fillna(0)
 print(train.dtypes)
 print(test.dtypes)
-cols = [c for c in train.columns if c not in ['is_churn','msno','msno.1']]
 
-print("Number of features: ",len(cols))
+print("Number of features: ",train.shape[1])
 
 #%%
 def xgb_score(preds, dtrain):
@@ -96,13 +102,15 @@ for i in range(fold):
         'seed': i,
         'silent': False
     }
-    x1, x2, y1, y2 = model_selection.train_test_split(train[cols], train['is_churn'], test_size=0.2, random_state=i)
+    x1, x2, y1, y2 = model_selection.train_test_split(train, labels, test_size=0.2, random_state=i)
     watchlist = [(xgb.DMatrix(x1, y1), 'train'), (xgb.DMatrix(x2, y2), 'valid')]
     model = xgb.train(params, xgb.DMatrix(x1, y1), 1500,  watchlist, feval=xgb_score, maximize=False, verbose_eval=50, early_stopping_rounds=50) #use 1500, was 150 before
     if i != 0:
-        pred += model.predict(xgb.DMatrix(test[cols]), ntree_limit=model.best_ntree_limit)
+        pred += model.predict(xgb.DMatrix(test), ntree_limit=model.best_ntree_limit)
     else:
-        pred = model.predict(xgb.DMatrix(test[cols]), ntree_limit=model.best_ntree_limit)
+        pred = model.predict(xgb.DMatrix(test), ntree_limit=model.best_ntree_limit)
 pred /= fold
-test['is_churn'] = pred.clip(0.+1e-15, 1-1e-15)
-test[['msno','is_churn']].to_csv('MyXgb_mini.csv', index=False)
+
+
+result['is_churn'] = pred
+result.to_csv('MyXgb_mini_plus.csv', index=False)
