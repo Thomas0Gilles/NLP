@@ -33,7 +33,7 @@ train = pd.concat((train, pd.read_csv('../data/train_v2.csv')), axis=0, ignore_i
 test = pd.read_csv('../data/sample_submission_v2.csv')
 
 #%% Merge user_FE
-#print("Loading 3 ...")
+print("Loading 3 ...")
 userFE = pd.read_csv('../data/user_FE.csv')
 change_datatype_float(userFE)
 change_datatype(userFE)
@@ -51,20 +51,20 @@ test = pd.merge(test, userFE, how='left', on='msno')
 del userFE
 
 #%% Merge trans_mem
-#print("Loading 2 ...")
-#transmem = pd.read_csv('../data/trans_mem.csv')
-#change_datatype_float(transmem)
-#change_datatype(transmem)
-#
-#for f in transmem.columns: 
-#    if transmem[f].dtype=='object': 
-#        print("type object pour ", f)
-#        if f!='msno':
-#            transmem.drop([f],axis=1)
-#
-#train = pd.merge(train, transmem, how='left', on='msno')
-#test = pd.merge(test, transmem, how='left', on='msno')
-#del transmem
+print("Loading 2 ...")
+transmem = pd.read_csv('../data/trans_mem_unscaled_categorical.csv')
+change_datatype_float(transmem)
+change_datatype(transmem)
+
+for f in transmem.columns: 
+    if transmem[f].dtype=='object': 
+        print("type object pour ", f)
+        if f!='msno':
+            transmem.drop([f],axis=1)
+
+train = pd.merge(train, transmem, how='left', on='msno')
+test = pd.merge(test, transmem, how='left', on='msno')
+del transmem
 
 #%% Replace na by 0, extract the columns used for prediction
 train = train.fillna(0)
