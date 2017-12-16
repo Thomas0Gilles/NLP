@@ -121,7 +121,7 @@ model = KerasClassifier(build_fn=create_model, verbose=1)
 #%% grid search epochs, batch size and optimizer
 optimizers = ['adam']#,'rmsprop']
 init = ['glorot_uniform']#, 'normal', 'uniform']
-epochs = [15]#, 100, 150]
+epochs = [1]#, 100, 150]
 batches = [1] #[5, 10, 20]
 param_grid = dict(optimizer=optimizers, epochs=epochs, batch_size=batches, init=init)
 
@@ -129,6 +129,7 @@ clf = GridSearchCV(estimator=model, param_grid=param_grid)
 
 #%% Fitting
 clf.fit(X, y)
+print("End fitting")
 clf.refit
 del X
 del y
@@ -190,5 +191,5 @@ del test
 #%% Write results
 
 result['is_churn'] = pred
-result.to_csv('NN_FE_mini_15.csv', index=False)
+result.to_csv('NN_FE_mini_1_test.csv', index=False)
 
