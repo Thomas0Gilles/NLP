@@ -75,7 +75,7 @@ del userFE
 #%% Replace na by 0, extract the columns used for prediction
 result = pd.DataFrame()
 result['msno'] = test['msno']
-labels = train['msno']
+labels = train['is_churn']
 
 train = train.drop(['msno','is_churn'],axis=1)
 test = test.drop(['msno','is_churn'],axis=1)
