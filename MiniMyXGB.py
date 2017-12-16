@@ -44,8 +44,8 @@ for f in userFE.columns:
         if f!='msno':
             userFE.drop([f],axis=1)
 print(userFE.dtypes)
-userFE = userFE
-
+userFE = userFE.drop(['msno.1'],axis=1)
+print(userFE.dtypes)
 train = pd.merge(train, userFE, how='left', on='msno')
 test = pd.merge(test, userFE, how='left', on='msno')
 del userFE
