@@ -42,8 +42,9 @@ print("Loading 1 ...")
 train = pd.read_csv('../data/train.csv')
 train = pd.concat((train, pd.read_csv('../data/train_v2.csv')), axis=0, ignore_index=True).reset_index(drop=True)
 
-trainIndex = train.index.values
+trainIndex = train['msno']
 y = train['is_churn'].values
+
 print("Exemple index : ", trainIndex[0])
 print("NB de valeurs : ", len(trainIndex))
 
@@ -163,7 +164,7 @@ print(bestParam)
 print("Loading 1 ...")
 test = pd.read_csv('../data/sample_submission_v2.csv')
 
-testIndex = test.index.values
+testIndex = test['msno']
 #%%
 print("Loading 2 ...")
 transmem = pd.read_csv('../data/trans_mem_unscaled_categorical.csv')
