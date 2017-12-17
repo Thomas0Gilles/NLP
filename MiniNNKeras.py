@@ -86,6 +86,8 @@ train = pd.merge(train, userFE, how='left', on='msno')
 del userFE
 
 #%% Create data & label
+print("Nb observation before:", train.shape[0])
+print("NB unique obs before:", len(train['msno'].unique()))
 train = train.loc[train['msno'].isin(trainIndex)]
 X = train.drop(['is_churn','msno','msno.1'], axis=1)
 print("end drop")
@@ -98,7 +100,7 @@ change_datatype_float(X)
 
 X = X.fillna(0)
 
-print("Nb observation before:", X.shape[0])
+
 
 X = X.values
 
