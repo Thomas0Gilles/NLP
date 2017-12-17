@@ -61,13 +61,6 @@ for c in col_to_scale:
     #print("Column ",c," has ",sum(np.isnan(df_comb[c]))," nan values sur ",df_comb.shape[0]," !")
     moy = np.nanmean(transmem[c])
     transmem[c] = (transmem[c] - moy)/np.sqrt(np.nansum(np.square(transmem[c] - moy)))    
-    
-for f in transmem.columns: 
-    if transmem[f].dtype=='object': 
-        print("type object pour ", f)
-        if f!='msno':
-            transmem.drop([f],axis=1)
-
 
 change_datatype(transmem)
 change_datatype_float(transmem)
@@ -179,12 +172,6 @@ for c in col_to_scale:
     #print("Column ",c," has ",sum(np.isnan(df_comb[c]))," nan values sur ",df_comb.shape[0]," !")
     moy = np.nanmean(transmem[c])
     transmem[c] = (transmem[c] - moy)/np.sqrt(np.nansum(np.square(transmem[c] - moy)))    
-    
-for f in transmem.columns: 
-    if transmem[f].dtype=='object': 
-        print("type object pour ", f)
-        if f!='msno':
-            transmem.drop([f],axis=1)
 
 
 change_datatype(transmem)
@@ -195,12 +182,6 @@ del transmem
 #%%
 print("Loading 3 ...")
 userFE = pd.read_csv('../data/user_FE_scaled.csv')
-
-for f in userFE.columns: 
-    if userFE[f].dtype=='object': 
-        print("type object pour ", f)
-        if f!='msno':
-            userFE.drop([f],axis=1)
 
 test = pd.merge(test, userFE, how='left', on='msno')
 del userFE
