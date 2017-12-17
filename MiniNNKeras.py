@@ -41,8 +41,13 @@ def change_datatype_float(df):
 print("Loading 1 ...")
 train = pd.read_csv('../data/train.csv')
 train = pd.concat((train, pd.read_csv('../data/train_v2.csv')), axis=0, ignore_index=True).reset_index(drop=True)
+print("Nb obs total", train.shape[0])
 
-trainIndex = train['msno']
+trainIndex = train['msno'].unique()
+print("Nb obs unique I: ", len(trainIndex))
+
+train = train.drop_duplicates(['msno'])
+print("Nb obs unique II: ", train.shape[0])
 y = train['is_churn'].values
 
 print("Exemple index : ", trainIndex[0])
@@ -53,6 +58,9 @@ print(train.dtypes)
 #%% Merge trans_mem
 print("Loading 2 ...")
 transmem = pd.read_csv('../data/trans_mem_unscaled_categorical.csv')
+print("Before transmem : ", transmem.shape[0])
+transmem = transmem.drop_duplicates(['msno'])
+print("After drop duplicate: ",transmem.shape[0])
 
 #print('Categorical encoding')
 #cat_features = ['payment_method_id','gender','city','registered_via']
@@ -81,14 +89,17 @@ userFE = pd.read_csv('../data/user_FE_scaled.csv',dtype={'num_985':np.float32,'n
                                                               'num_985.2':np.float32,'num_985.3':np.float32, 'num_50':np.float32,'num_50.1':np.float32,
                                                              'num_50.2':np.float32,'num_50.3':np.float32})
 
-
+print("Before userFE : ", userFE.shape[0])
+userFE = userFE.drop_duplicates(['msno'])
+print("After drop duplicate: ",userFE.shape[0])
 train = pd.merge(train, userFE, how='left', on='msno')
 del userFE
 
 #%% Create data & label
 print("Nb observation before:", train.shape[0])
-print("NB unique obs before:", len(train['msno'].unique()))
-train = train.loc[train['msno'].isin(trainIndex)]
+train = train.drop_duplicates(['msno'])
+print("NB obs after:", train.shape[0])
+
 X = train.drop(['is_churn','msno','msno.1'], axis=1)
 print("end drop")
 del train
@@ -165,12 +176,12 @@ print(bestParam)
 #%%
 print("Loading 1 ...")
 test = pd.read_csv('../data/sample_submission_v2.csv')
-
+test = test.drop_duplicates(['msno'])
 testIndex = test['msno']
 #%%
 print("Loading 2 ...")
 transmem = pd.read_csv('../data/trans_mem_unscaled_categorical.csv')
-
+transmem = transmem.drop_duplicates(['msno'])
 #print('Categorical encoding')
 #cat_features = ['payment_method_id','gender','city','registered_via']
 #for column in cat_features:
@@ -194,14 +205,14 @@ del transmem
 #%%
 print("Loading 3 ...")
 userFE = pd.read_csv('../data/user_FE_scaled.csv')
-
+userFE = userFE.drop_duplicates(['msno'])
 test = pd.merge(test, userFE, how='left', on='msno')
 del userFE
 
 result = pd.DataFrame()
 result['msno'] = testIndex
 
-test = test.loc[test['msno'].isin(testIndex)]
+test = test.drop_duplicates(['msno'])
 test = test.drop(['msno','is_churn','msno.1'], axis=1)
 test = test.fillna(0)
 
