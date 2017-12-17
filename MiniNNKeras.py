@@ -43,15 +43,11 @@ train = pd.read_csv('../data/train.csv')
 train = pd.concat((train, pd.read_csv('../data/train_v2.csv')), axis=0, ignore_index=True).reset_index(drop=True)
 print("Nb obs total", train.shape[0])
 
-trainIndex = train['msno'].unique()
-print("Nb obs unique I: ", len(trainIndex))
-
 train = train.drop_duplicates(['msno'])
 print("Nb obs unique II: ", train.shape[0])
 y = train['is_churn'].values
 
-print("Exemple index : ", trainIndex[0])
-print("NB de valeurs : ", len(trainIndex))
+
 
 print(train.dtypes)
 
@@ -62,12 +58,12 @@ print("Before transmem : ", transmem.shape[0])
 transmem = transmem.drop_duplicates(['msno'])
 print("After drop duplicate: ",transmem.shape[0])
 
-#print('Categorical encoding')
-#cat_features = ['payment_method_id','gender','city','registered_via']
-#for column in cat_features:
-#	temp = pd.get_dummies(pd.Series(transmem[column]))
-#	transmem = pd.concat([transmem,temp],axis=1)
-#	transmem = transmem.drop([column],axis=1)
+print('Categorical encoding')
+cat_features = ['payment_method_id','gender','city','registered_via']
+for column in cat_features:
+	temp = pd.get_dummies(pd.Series(transmem[column]))
+	transmem = pd.concat([transmem,temp],axis=1)
+	transmem = transmem.drop([column],axis=1)
 
 print('Scaling')
 col_to_scale = ['trans_count','long_time_user','reg_mem_duration','registration_duration','membership_duration','discount','amt_per_day','bd','payment_plan_days','plan_list_price','actual_amount_paid']
@@ -182,12 +178,12 @@ testIndex = test['msno']
 print("Loading 2 ...")
 transmem = pd.read_csv('../data/trans_mem_unscaled_categorical.csv')
 transmem = transmem.drop_duplicates(['msno'])
-#print('Categorical encoding')
-#cat_features = ['payment_method_id','gender','city','registered_via']
-#for column in cat_features:
-#	temp = pd.get_dummies(pd.Series(transmem[column]))
-#	transmem = pd.concat([transmem,temp],axis=1)
-#	transmem = transmem.drop([column],axis=1)
+print('Categorical encoding')
+cat_features = ['payment_method_id','gender','city','registered_via']
+for column in cat_features:
+	temp = pd.get_dummies(pd.Series(transmem[column]))
+	transmem = pd.concat([transmem,temp],axis=1)
+	transmem = transmem.drop([column],axis=1)
 
 print('Scaling')
 col_to_scale = ['trans_count','long_time_user','reg_mem_duration','registration_duration','membership_duration','discount','amt_per_day','bd','payment_plan_days','plan_list_price','actual_amount_paid']
@@ -205,7 +201,7 @@ del transmem
 #%%
 print("Loading 3 ...")
 userFE = pd.read_csv('../data/user_FE_scaled.csv')
-userFE = userFE.drop_duplicates(['msno'])
+userFE = userFE.drop_duplicates(['msno'])   
 test = pd.merge(test, userFE, how='left', on='msno')
 del userFE
 
