@@ -48,12 +48,12 @@ print(train.dtypes)
 print("Loading 2 ...")
 transmem = pd.read_csv('../data/trans_mem_unscaled_categorical.csv')
 
-print('Categorical encoding')
-cat_features = ['payment_method_id','gender','city','registered_via']
-for column in cat_features:
-	temp = pd.get_dummies(pd.Series(transmem[column]))
-	transmem = pd.concat([transmem,temp],axis=1)
-	transmem = transmem.drop([column],axis=1)
+#print('Categorical encoding')
+#cat_features = ['payment_method_id','gender','city','registered_via']
+#for column in cat_features:
+#	temp = pd.get_dummies(pd.Series(transmem[column]))
+#	transmem = pd.concat([transmem,temp],axis=1)
+#	transmem = transmem.drop([column],axis=1)
 
 print('Scaling')
 col_to_scale = ['trans_count','long_time_user','reg_mem_duration','registration_duration','membership_duration','discount','amt_per_day','bd','payment_plan_days','plan_list_price','actual_amount_paid']
@@ -159,12 +159,12 @@ test = pd.read_csv('../data/sample_submission_v2.csv')
 print("Loading 2 ...")
 transmem = pd.read_csv('../data/trans_mem_unscaled_categorical.csv')
 
-print('Categorical encoding')
-cat_features = ['payment_method_id','gender','city','registered_via']
-for column in cat_features:
-	temp = pd.get_dummies(pd.Series(transmem[column]))
-	transmem = pd.concat([transmem,temp],axis=1)
-	transmem = transmem.drop([column],axis=1)
+#print('Categorical encoding')
+#cat_features = ['payment_method_id','gender','city','registered_via']
+#for column in cat_features:
+#	temp = pd.get_dummies(pd.Series(transmem[column]))
+#	transmem = pd.concat([transmem,temp],axis=1)
+#	transmem = transmem.drop([column],axis=1)
 
 print('Scaling')
 col_to_scale = ['trans_count','long_time_user','reg_mem_duration','registration_duration','membership_duration','discount','amt_per_day','bd','payment_plan_days','plan_list_price','actual_amount_paid']
