@@ -42,6 +42,11 @@ print("Loading 1 ...")
 train = pd.read_csv('../data/train.csv')
 train = pd.concat((train, pd.read_csv('../data/train_v2.csv')), axis=0, ignore_index=True).reset_index(drop=True)
 
+trainIndex = train.index.values
+y = train['is_churn'].values
+print("Exemple index : ", trainIndex[0])
+print("NB de valeurs : ", len(trainIndex))
+
 print(train.dtypes)
 
 #%% Merge trans_mem
@@ -80,7 +85,7 @@ train = pd.merge(train, userFE, how='left', on='msno')
 del userFE
 
 #%% Create data & label
-y = train['is_churn']
+train = train.loc[train['msno'].isin(trainIndex)]
 X = train.drop(['is_churn','msno','msno.1'], axis=1)
 print("end drop")
 del train
@@ -92,11 +97,13 @@ change_datatype_float(X)
 
 X = X.fillna(0)
 
+print("Nb observation before:", X.shape[0])
+
 X = X.values
-y = y.values 
 
 N_feature = X.shape[1]
 print("Number of features: ",N_feature)
+print("Number of observations: ",X.shape[0] )
 #%%
 
 
@@ -155,6 +162,8 @@ print(bestParam)
 #%%
 print("Loading 1 ...")
 test = pd.read_csv('../data/sample_submission_v2.csv')
+
+testIndex = test.index.values
 #%%
 print("Loading 2 ...")
 transmem = pd.read_csv('../data/trans_mem_unscaled_categorical.csv')
@@ -187,8 +196,9 @@ test = pd.merge(test, userFE, how='left', on='msno')
 del userFE
 
 result = pd.DataFrame()
-result['msno'] = test['msno']
+result['msno'] = testIndex
 
+test = test.loc[test['msno'].isin(testIndex)]
 test = test.drop(['msno','is_churn','msno.1'], axis=1)
 test = test.fillna(0)
 
