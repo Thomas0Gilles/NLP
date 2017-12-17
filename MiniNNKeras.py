@@ -123,15 +123,15 @@ print("Number of observations: ",X.shape[0] )
 
 #%%
 # Function to create model, required for KerasClassifier
-#def create_model(optimizer='rmsprop', init='glorot_uniform'):
-#	# create model
-#	model = Sequential()
-#	model.add(Dense(int(110), input_dim=int(N_feature), kernel_initializer=init, activation='relu'))
-#	model.add(Dense(int(15), kernel_initializer=init, activation='relu'))
-#	model.add(Dense(int(1), kernel_initializer=init, activation='sigmoid'))
-#	# Compile model
-#	model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
-#	return model
+def create_model(optimizer='rmsprop', init='glorot_uniform'):
+	# create model
+	model = Sequential()
+	model.add(Dense(int(110), input_dim=int(N_feature), kernel_initializer=init, activation='relu'))
+	model.add(Dense(int(15), kernel_initializer=init, activation='relu'))
+	model.add(Dense(int(1), kernel_initializer=init, activation='sigmoid'))
+	# Compile model
+	model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+	return model
 
 #def create_model_complex(optimizer='rmsprop', init='glorot_uniform', Nnode = 110, Nnodehiddelayer = [15]):
 #    model = Sequential()
@@ -141,39 +141,39 @@ print("Number of observations: ",X.shape[0] )
 #    model.add(Dense(1, kernel_initializer=init, activation='sigmoid'))
 #    model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 #    return model
-model = Sequential()
-model.add(Dense(int(110), input_dim=int(N_feature), kernel_initializer='glorot_uniform', activation='relu'))
-model.add(Dense(int(15), kernel_initializer='glorot_uniform', activation='relu'))
-model.add(Dense(int(1), kernel_initializer='glorot_uniform', activation='sigmoid'))
-model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'], epochs=1, batch_size=1)
-
-model.fit(X,y)
-#model = KerasClassifier(build_fn=create_model, verbose=1)
+#model = Sequential()
+#model.add(Dense(int(110), input_dim=int(N_feature), kernel_initializer='glorot_uniform', activation='relu'))
+#model.add(Dense(int(15), kernel_initializer='glorot_uniform', activation='relu'))
+#model.add(Dense(int(1), kernel_initializer='glorot_uniform', activation='sigmoid'))
+#model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'], epochs=1, batch_size=1)
+#
+#model.fit(X,y)
+model = KerasClassifier(build_fn=create_model, verbose=1)
 
 #%% grid search epochs, batch size and optimizer
-#optimizers = ['adam']#,'rmsprop']
-#init = ['glorot_uniform']#, 'normal', 'uniform']
-#epochs = [1]#, 100, 150]
-#batches = [1] #[5, 10, 20]
-#param_grid = dict(optimizer=optimizers, epochs=epochs, batch_size=batches, init=init)
-#
-#clf = GridSearchCV(estimator=model, param_grid=param_grid)
+optimizers = ['adam']#,'rmsprop']
+init = ['glorot_uniform']#, 'normal', 'uniform']
+epochs = [1]#, 100, 150]
+batches = [1] #[5, 10, 20]
+param_grid = dict(optimizer=optimizers, epochs=epochs, batch_size=batches, init=init)
+
+clf = GridSearchCV(estimator=model, param_grid=param_grid)
 
 #%% Fitting
-#clf.fit(X, y)
-#print("End fitting")
-#clf.refit
-#del X
-#del y
-#
-##%% Export best param
-#bestParam = clf.best_params_
-#
-#dfg=open("bestParams1.txt",'w')
-#json.dump(bestParam,dfg)
-#dfg.close()
-#
-#print(bestParam)
+clf.fit(X, y)
+print("End fitting")
+clf.refit
+del X
+del y
+
+#%% Export best param
+bestParam = clf.best_params_
+
+dfg=open("bestParams1.txt",'w')
+json.dump(bestParam,dfg)
+dfg.close()
+
+print(bestParam)
 
 #%%
 print("Loading 1 ...")
@@ -223,8 +223,8 @@ change_datatype_float(test)
 
 test = test.values
 
-#pred = clf.predict(test)
-pred = model.predict(test)
+pred = clf.predict(test)
+#pred = model.predict(test)
 del test
 
 #%% Write results
