@@ -46,15 +46,35 @@ print(train.dtypes)
 
 #%% Merge trans_mem
 print("Loading 2 ...")
-#transmem = pd.read_csv('../data/trans_mem_scaled.csv', dtype={'Unnamed: 0':np.int32,'payment_plan_days':np.float32,'plan_list_price':np.float32,
-#                                                              'actual_amount_paid':np.float32,'is_auto_renew': np.int8, 'is_cancel': np.float32,
-#                                                              'trans_count':np.float32,'discount':np.float32,'is_discount':np.int8,'amt_per_day': np.float32,
-#                                                              'membership_duration':np.float32,'bd':np.float32,'registration_duration': np.float32,'reg_mem_duration':np.float32,
-#                                                              'autorenew_&_not_cancel':np.int8,'notAutorenew_&_cancel': np.int8,'long_time_user':np.float32,'2':np.int8})
-#
-#train = pd.merge(train, transmem, how='left', on='msno')
-#print("end merge")
-#del transmem
+transmem = pd.read_csv('../data/trans_mem_unscaled_categorical.csv')
+
+print('Categorical encoding')
+cat_features = ['payment_method_id','gender','city','registered_via']
+for column in cat_features:
+	temp = pd.get_dummies(pd.Series(transmem[column]))
+	transmem = pd.concat([transmem,temp],axis=1)
+	transmem = transmem.drop([column],axis=1)
+
+print('Scaling')
+col_to_scale = ['trans_count','long_time_user','reg_mem_duration','registration_duration','membership_duration','discount','amt_per_day','bd','payment_plan_days','plan_list_price','actual_amount_paid']
+for c in col_to_scale:
+    #print("Column ",c," has ",sum(np.isnan(df_comb[c]))," nan values sur ",df_comb.shape[0]," !")
+    moy = np.nanmean(transmem[c])
+    transmem[c] = (transmem[c] - moy)/np.sqrt(np.nansum(np.square(transmem[c] - moy)))    
+    
+for f in transmem.columns: 
+    if transmem[f].dtype=='object': 
+        print("type object pour ", f)
+        if f!='msno':
+            transmem.drop([f],axis=1)
+
+
+change_datatype(transmem)
+change_datatype_float(transmem)
+
+train = pd.merge(train, transmem, how='left', on='msno')
+print("end merge")
+del transmem
 
 #%% Merge user_FE
 print("Loading 3 ...")
@@ -74,12 +94,8 @@ del train
 
 print(X.dtypes)
 
-colX = X.columns
-
 change_datatype(X)
 change_datatype_float(X)
-
-
 
 X = X.fillna(0)
 
@@ -146,21 +162,37 @@ print(bestParam)
 #%%
 print("Loading 1 ...")
 test = pd.read_csv('../data/sample_submission_v2.csv')
+#%%
 print("Loading 2 ...")
-transmem = pd.read_csv('../data/trans_mem_scaled.csv', dtype={'Unnamed: 0':np.int32,'payment_plan_days':np.float32,'plan_list_price':np.float32,
-                                                              'actual_amount_paid':np.float32,'is_auto_renew': np.int8, 'is_cancel': np.float32,
-                                                              'trans_count':np.float32,'discount':np.float32,'is_discount':np.int8,'amt_per_day': np.float32,
-                                                              'membership_duration':np.float32,'bd':np.float32,'registration_duration': np.float32,'reg_mem_duration':np.float32,
-                                                              'autorenew_&_not_cancel':np.int8,'notAutorenew_&_cancel': np.int8,'long_time_user':np.float32,'2':np.int8})
+transmem = pd.read_csv('../data/trans_mem_unscaled_categorical.csv')
 
+print('Categorical encoding')
+cat_features = ['payment_method_id','gender','city','registered_via']
+for column in cat_features:
+	temp = pd.get_dummies(pd.Series(transmem[column]))
+	transmem = pd.concat([transmem,temp],axis=1)
+	transmem = transmem.drop([column],axis=1)
+
+print('Scaling')
+col_to_scale = ['trans_count','long_time_user','reg_mem_duration','registration_duration','membership_duration','discount','amt_per_day','bd','payment_plan_days','plan_list_price','actual_amount_paid']
+for c in col_to_scale:
+    #print("Column ",c," has ",sum(np.isnan(df_comb[c]))," nan values sur ",df_comb.shape[0]," !")
+    moy = np.nanmean(transmem[c])
+    transmem[c] = (transmem[c] - moy)/np.sqrt(np.nansum(np.square(transmem[c] - moy)))    
+    
 for f in transmem.columns: 
     if transmem[f].dtype=='object': 
         print("type object pour ", f)
         if f!='msno':
             transmem.drop([f],axis=1)
-    
+
+
+change_datatype(transmem)
+change_datatype_float(transmem)
+ 
 test = pd.merge(test, transmem, how='left', on='msno')
 del transmem
+#%%
 print("Loading 3 ...")
 userFE = pd.read_csv('../data/user_FE_scaled.csv')
 
@@ -178,7 +210,6 @@ result['msno'] = test['msno']
 
 test = test.drop(['msno','is_churn','msno.1'], axis=1)
 test = test.fillna(0)
-test = test[colX]
 
 change_datatype(test)
 change_datatype_float(test)
@@ -191,5 +222,5 @@ del test
 #%% Write results
 
 result['is_churn'] = pred
-result.to_csv('NN_FE_mini_1_test.csv', index=False)
+result.to_csv('NN_FE__test.csv', index=False)
 
