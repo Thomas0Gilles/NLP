@@ -1,116 +1,382 @@
-## Some feature inspired from https://www.kaggle.com/jeru666/did-you-think-of-these-features
-import pandas as pd
-print(pd.__version__)
+import random
 import numpy as np
+import pandas as pd
+import igraph
+from sklearn import svm
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import linear_kernel
+from sklearn import preprocessing
+import nltk
+import csv
+
+from gensim.models.word2vec import Word2Vec
+path_to_google_news = "../"
+import re
+import string
+
+import os
+print("old working dir",os.getcwd())
+os.chdir('c:\\Users\Marc\desktop\NLP\Kaggle')
+print("new working dir",os.getcwd())
 
 #%%
-def change_datatype(df):
-    int_cols = list(df.select_dtypes(include=['int']).columns)
-    for col in int_cols:
-        if ((np.max(df[col]) <= 127) and(np.min(df[col] >= -128))):
-            df[col] = df[col].astype(np.int8)
-        elif ((np.max(df[col]) <= 32767) and(np.min(df[col] >= -32768))):
-            df[col] = df[col].astype(np.int16)
-        elif ((np.max(df[col]) <= 2147483647) and(np.min(df[col] >= -2147483648))):
-            df[col] = df[col].astype(np.int32)
-        else:
-            df[col] = df[col].astype(np.int64)
+punct = string.punctuation.replace('-', '').replace("'",'')
+my_regex = re.compile(r"(\b[-']\b)|[\W_]")
 
-def change_datatype_float(df):
-    float_cols = list(df.select_dtypes(include=['float']).columns)
-    for col in float_cols:
-        df[col] = df[col].astype(np.float32)
-        
-#%% Loading transaction
-print("Read ...")
-df_transactions = pd.read_csv('../data/transactions.csv') 
-df_transactions = pd.concat((df_transactions, pd.read_csv('../data/transactions_v2.csv')), axis=0, ignore_index=True).reset_index(drop=True)
-
-change_datatype(df_transactions)
-change_datatype_float(df_transactions)
+def clean_string(string, punct=punct, my_regex=my_regex, to_lower=False):
+    if to_lower:
+        string = string.lower()
+    # remove formatting
+    str = re.sub('\s+', ' ', string)
+     # remove punctuation
+    str = ''.join(l for l in str if l not in punct)
+    # remove dashes that are not intra-word
+    str = my_regex.sub(lambda x: (x.group(1) if x.group(1) else ' '), str)
+    # strip extra white space
+    str = re.sub(' +',' ',str)
+    # strip leading and trailing white space
+    str = str.strip()
+    return str
 
 
+#%% NLTK initialization
+nltk.download('punkt') # for tokenization
+nltk.download('stopwords')
+#stpwds = set(nltk.corpus.stopwords.words("english"))
+# Other Approach of stop word to test
+with open('smart_stopwords.txt', 'r') as my_file: 
+    stpwds = my_file.read().splitlines()
+stemmer = nltk.stem.PorterStemmer()
 
-#%% Creating new feature
-dcount = pd.DataFrame(df_transactions['msno'].value_counts().reset_index())
-dcount.columns = ['msno','trans_count']
-df_transactions = pd.merge(df_transactions, dcount, on='msno', how='inner')
+#%% data loading and preprocessing 
 
-df_transactions['discount'] = df_transactions['plan_list_price'] - df_transactions['actual_amount_paid']
-df_transactions['is_discount'] = df_transactions.discount.apply(lambda x: 1 if x > 0 else 0)
-df_transactions['amt_per_day'] = df_transactions['actual_amount_paid'] / df_transactions['payment_plan_days']
+# the columns of the data frame below are: 
+# (1) paper unique ID (integer)
+# (2) publication year (integer)
+# (3) paper title (string)
+# (4) authors (strings separated by ,)
+# (5) name of journal (optional) (string)
+# (6) abstract (string) - lowercased, free of punctuation except intra-word dashes
 
-date_cols = ['transaction_date', 'membership_expire_date']
-for col in date_cols:
-    df_transactions[col] = pd.to_datetime(df_transactions[col], infer_datetime_format=True) #format='%Y%m%d'
 
-df_transactions['membership_duration'] = df_transactions.membership_expire_date - df_transactions.transaction_date
-df_transactions['membership_duration'] = df_transactions['membership_duration'] / np.timedelta64(1, 'D')
-df_transactions['membership_duration'] = df_transactions['membership_duration'].astype(int)
+with open("testing_set.txt", "r") as f:
+    reader = csv.reader(f)
+    testing_set  = list(reader)
 
-#Drop dates
-df_transactions = df_transactions.drop(date_cols, axis=1)
+testing_set = [element[0].split(" ") for element in testing_set]
 
-change_datatype(df_transactions)
-change_datatype_float(df_transactions)
+with open("training_set.txt", "r") as f:
+    reader = csv.reader(f)
+    training_set  = list(reader)
 
-#%% Import member
-print("Read ...")
-df_members = pd.read_csv('../data/members_v3.csv')
-gender = {'male':1, 'female':2}
-df_members['gender'] = df_members['gender'].map(gender)
-df_members['bd'] = df_members['bd'].clip(0,100)
+training_set = [element[0].split(" ") for element in training_set]
 
-change_datatype(df_members)
-change_datatype_float(df_members)
+with open("node_information.csv", "r") as f:
+    reader = csv.reader(f)
+    node_info  = list(reader)
 
-date_cols = ['registration_init_time']
+IDs = [element[0] for element in node_info]
 
-for col in date_cols:
-    df_members[col] = pd.to_datetime(df_members[col], format='%Y%m%d')
+#%% TF-IDF
+# compute TFIDF vector of each paper
+corpus = [element[5] for element in node_info]
+vectorizer = TfidfVectorizer(stop_words="english")
+# each row is a node in the order of node_info
+features_TFIDF = vectorizer.fit_transform(corpus)
+
+#%% Igraph
+print("Constructing the igraph")
+# the following shows how to construct a graph with igraph
+# even though in this baseline we don't use it
+# look at http://igraph.org/python/doc/igraph.Graph-class.html for feature ideas
+
+edges = [(element[0],element[1]) for element in training_set if element[2]=="1"]
+
+# some nodes may not be connected to any other node
+# hence the need to create the nodes of the graph from node_info.csv,
+# not just from the edge list
+
+nodes = IDs
+
+# create empty directed graph
+g = igraph.Graph(directed=True)
+ 
+# add vertices
+g.add_vertices(nodes)
+ 
+# add edges
+g.add_edges(edges)
+
+
+#%% Cleaned docs
+print("Cleaning the docs")
+cleaned_docs_abstract = []
+for idx, doc in enumerate(corpus):
+    # clean
+    doc = clean_string(doc, punct, my_regex, to_lower=True)
+    # tokenize (split based on whitespace)
+    tokens = doc.split(' ')
+    # remove stopwords
+    tokens = [token for token in tokens if token not in stpwds]
+    # remove digits
+    tokens = [''.join([elt for elt in token if not elt.isdigit()]) for token in tokens]
+    # remove tokens shorter than 3 characters in size
+    tokens = [token for token in tokens if len(token)>2]
+    # remove tokens exceeding 25 characters in size
+    tokens = [token for token in tokens if len(token)<=25]
+    cleaned_docs_abstract.append(tokens)
+    if idx % round(len(corpus)/10) == 0:
+        print(idx)
+
+corpus_title = [element[2] for element in node_info]
+cleaned_docs_title = []
+for idx, doc in enumerate(corpus_title):
+    # clean
+    doc = clean_string(doc, punct, my_regex, to_lower=True)
+    # tokenize (split based on whitespace)
+    tokens = doc.split(' ')
+    # remove stopwords
+    tokens = [token for token in tokens if token not in stpwds]
+    # remove digits
+    tokens = [''.join([elt for elt in token if not elt.isdigit()]) for token in tokens]
+    # remove tokens shorter than 3 characters in size
+    tokens = [token for token in tokens if len(token)>2]
+    # remove tokens exceeding 25 characters in size
+    tokens = [token for token in tokens if len(token)<=25]
+    cleaned_docs_title.append(tokens)
+    if idx % round(len(corpus_title)/10) == 0:
+        print(idx)
+
+#%%
+print("Building the w2v")
+# create empty word vectors for the words in vocabulary 
+my_q = 300 # to match dim of GNews word vectors
+mcount = 5
+w2v_abstract = Word2Vec(size=my_q, min_count=mcount)
+w2v_title = Word2Vec(size=my_q, min_count=mcount)
+
+### fill gap ### # hint: use the build_vocab method
+w2v_abstract.build_vocab(cleaned_docs_abstract)
+w2v_title.build_vocab(cleaned_docs_title)
+
+# load vectors corresponding to our vocabulary
+w2v_abstract.intersect_word2vec_format(path_to_google_news + 'GoogleNews-vectors-negative300.bin.gz', binary=True)
+w2v_title.intersect_word2vec_format(path_to_google_news + 'GoogleNews-vectors-negative300.bin.gz', binary=True)
+
+
+#%% Feature Engineering
+print("Feature Engineering test")
+# test
+# we need to compute the features for the testing set
+
+overlap_title_test = []
+temp_diff_test = []
+comm_auth_test = []
+
+comm_auth_prop_test = []
+overlap_journal_test = []
+WMD_abstract_test = []
+WMD_title_test = []
+   
+counter = 0
+for i in xrange(len(testing_set)):
+    source = testing_set[i][0]
+    target = testing_set[i][1]
     
-#--- difference in days ---
-df_members['registration_duration'] = pd.to_datetime(20170430,format='%Y%m%d') - df_members.registration_init_time
-df_members['registration_duration'] = df_members['registration_duration'] / np.timedelta64(1, 'D')
-df_members['registration_duration'] = df_members['registration_duration'].astype(int)
+    index_source = IDs.index(source)
+    index_target = IDs.index(target)
+        
+    source_info = [element for element in node_info if element[0]==source][0]
+    target_info = [element for element in node_info if element[0]==target][0]
+    
+    source_title = source_info[2].lower().split(" ")
+    source_title = [token for token in source_title if token not in stpwds]
+    source_title = [stemmer.stem(token) for token in source_title]
+    
+    target_title = target_info[2].lower().split(" ")
+    target_title = [token for token in target_title if token not in stpwds]
+    target_title = [stemmer.stem(token) for token in target_title]
+    
+    source_auth = source_info[3].split(",")
+    target_auth = target_info[3].split(",")
+    
+    overlap_title_test.append(len(set(source_title).intersection(set(target_title))))
+    temp_diff_test.append(int(source_info[1]) - int(target_info[1]))
+    comm_auth_test.append(len(set(source_auth).intersection(set(target_auth))))
+    
+    comm_auth_prop_test.append(len(set(source_auth).intersection(set(target_auth)))/(max(1.0,(len(source_auth)+len(target_auth))/2.0)))
 
-#Drop dates
-df_members = df_members.drop(date_cols, axis=1)
+    target_abstract = [elt for elt in target_info[5].split(' ') if elt not in stpwds]
+    source_abstract = [elt for elt in source_info[5].split(' ') if elt not in stpwds]
+    
+    WMD_abstract_test.append(w2v_abstract.wmdistance(target_abstract,source_abstract))
+    
+    
+    target_title = [elt for elt in target_info[2].split(' ') if elt not in stpwds]
+    source_title = [elt for elt in source_info[2].split(' ') if elt not in stpwds]
+    
+    WMD_title_test.append(w2v_title.wmdistance(target_title,source_title))
+    
+    
+    source_journal = source_info[4]
+    target_journal = target_info[4]
+    
+    if source_journal != '' and target_journal != '':
+        source_journal = source_journal.lower().split(" ")	
+        source_journal = [token for token in source_journal if token not in stpwds]
+        source_journal = [stemmer.stem(token) for token in source_journal]
+        
+        target_journal = target_journal.lower().split(" ")	
+        target_journal = [token for token in target_journal if token not in stpwds]
+        target_journal = [stemmer.stem(token) for token in target_journal]       
+        
+        overlap_journal_test.append(len(set(source_journal).intersection(set(target_journal))))
+        
+        target_journal = [elt for elt in target_info[4].split(' ') if elt not in stpwds]
+        source_journal = [elt for elt in source_info[4].split(' ') if elt not in stpwds]
+        
+    else :
+        overlap_journal_test.append(0.0)
+    
+   
+    counter += 1
+    if counter % 1000 == True:
+        print(counter, "testing examples processsed")
+        
+# convert list of lists into array
+# documents as rows, unique words as columns (i.e., example as rows, features as columns)
+testing_features = np.array([overlap_title_test,temp_diff_test,comm_auth_test,comm_auth_prop_test,overlap_journal_test, WMD_abstract_test, WMD_title_test]).T
+
+testing_features[np.isinf(testing_features)] = 0.0
+
+# scale
+testing_features = preprocessing.scale(testing_features)
+
+testset = pd.DataFrame(data = testing_features, columns=["overlap_title", "temp_diff", "comm_auth", "comm_auth_prop", "overlap_journal", "WMD_abstract", "WMD_title"])
+testset.to_csv('data/testset_full.csv')
 
 
-change_datatype(df_members)
-change_datatype_float(df_members)
+#frac = 1.0
+#print("Feature Engineering train with ",frac," of the train set")
+# in this baseline we will train the model on only  frac % of the training set
 
-#%% Merge and delete
-print("Merge ...")
-df_comb = pd.merge(df_transactions, df_members, on='msno', how='inner')
-del df_transactions
-del df_members
 
-#%%
-df_comb['reg_mem_duration'] = df_comb['registration_duration'] - df_comb['membership_duration']
-df_comb['autorenew_&_not_cancel'] = ((df_comb.is_auto_renew == 1) == (df_comb.is_cancel == 0)).astype(np.int8)
-df_comb['notAutorenew_&_cancel'] = ((df_comb.is_auto_renew == 0) == (df_comb.is_cancel == 1)).astype(np.int8)
-df_comb['long_time_user'] = (((df_comb['registration_duration'] / 365).astype(int)) > 1).astype(int)
+# randomly select 5% of training set
+#to_keep = random.sample(range(len(training_set)), k=int(round(len(training_set)*frac)))
+training_set_reduced = training_set #[training_set[i] for i in to_keep]
 
-#%%
-print('Categorical encoding')
-cat_features = ['payment_method_id','gender','city','registered_via']
-for column in cat_features:
-	temp = pd.get_dummies(pd.Series(df_comb[column]))
-	df_comb = pd.concat([df_comb,temp],axis=1)
-	df_comb = df_comb.drop([column],axis=1)
+## basic features:
+# number of overlapping words in title
+overlap_title = []
+# temporal distance between the papers
+temp_diff = []
+# number of common authors
+comm_auth = []
 
-#print('Scaling')
-#col_to_scale = ['trans_count','long_time_user','reg_mem_duration','registration_duration','membership_duration','discount','amt_per_day','bd','payment_plan_days','plan_list_price','actual_amount_paid']
-#for c in col_to_scale:
-#    #print("Column ",c," has ",sum(np.isnan(df_comb[c]))," nan values sur ",df_comb.shape[0]," !")
-#    moy = np.nanmean(df_comb[c])
-#    df_comb[c] = (df_comb[c] - moy)/np.sqrt(np.nansum(np.square(df_comb[c] - moy)))
+## others features:
+# proportion of common authors in the average total number of author
+comm_auth_prop = []
+# number of overlapping words in journal
+overlap_journal = []
+# WMD for the titles
+WMD_title = []
+# WMD for the abstracts
+WMD_abstract = []
 
-change_datatype(df_comb)
-change_datatype_float(df_comb)
 
-#%%
-print("Write ...")
-df_comb.to_csv('../data/trans_mem.csv')
+# Other ideas: cosine similarity, centroids similarity
+
+
+counter = 0
+for i in xrange(len(training_set_reduced)):
+    source = training_set_reduced[i][0]
+    target = training_set_reduced[i][1]
+    
+    index_source = IDs.index(source)
+    index_target = IDs.index(target)
+    
+    source_info = [element for element in node_info if element[0]==source][0]
+    target_info = [element for element in node_info if element[0]==target][0]
+    
+	# convert to lowercase and tokenize
+    source_title = source_info[2].lower().split(" ")
+	# remove stopwords
+    source_title = [token for token in source_title if token not in stpwds]
+    source_title = [stemmer.stem(token) for token in source_title]
+    
+    target_title = target_info[2].lower().split(" ")
+    target_title = [token for token in target_title if token not in stpwds]
+    target_title = [stemmer.stem(token) for token in target_title]
+    
+    source_auth = source_info[3].split(",")
+    target_auth = target_info[3].split(",")
+    
+    overlap_title.append(len(set(source_title).intersection(set(target_title))))
+    temp_diff.append(int(source_info[1]) - int(target_info[1]))
+    comm_auth.append(len(set(source_auth).intersection(set(target_auth))))
+    
+    comm_auth_prop.append(len(set(source_auth).intersection(set(target_auth)))/(max(1.0,(len(source_auth)+len(target_auth))/2.0)))
+    
+    target_abstract = [elt for elt in target_info[5].split(' ') if elt not in stpwds]
+    source_abstract = [elt for elt in source_info[5].split(' ') if elt not in stpwds]
+    
+    WMD_abstract.append(w2v_abstract.wmdistance(target_abstract,source_abstract))
+    
+    
+    
+    target_title = [elt for elt in target_info[2].split(' ') if elt not in stpwds]
+    source_title = [elt for elt in source_info[2].split(' ') if elt not in stpwds]
+    
+    WMD_title.append(w2v_title.wmdistance(target_title,source_title))
+    
+    source_journal = source_info[4]
+    target_journal = target_info[4]
+    
+    if source_journal != '' and target_journal != '':
+        source_journal = source_journal.lower().split(" ")	
+        source_journal = [token for token in source_journal if token not in stpwds]
+        source_journal = [stemmer.stem(token) for token in source_journal]
+        
+        target_journal = target_journal.lower().split(" ")	
+        target_journal = [token for token in target_journal if token not in stpwds]
+        target_journal = [stemmer.stem(token) for token in target_journal]       
+        
+        overlap_journal.append(len(set(source_journal).intersection(set(target_journal))))
+        
+        target_journal = [elt for elt in target_info[4].split(' ') if elt not in stpwds]
+        source_journal = [elt for elt in source_info[4].split(' ') if elt not in stpwds]
+        
+    else :
+        #NB: It could be possible to use another encoding nan
+        overlap_journal.append(0.0)
+    
+    counter += 1
+    if counter % 1000 == True:
+        print(counter, "training examples processsed")
+        print "WMD_abstract :", WMD_abstract[-1]
+        print "WMD_title :", WMD_title[-1]
+        print "overlap_journal :", overlap_journal[-1]
+        print "comm_auth_prop :", comm_auth_prop[-1]
+        print "overlap_title :", overlap_title[-1]
+        print "temp_diff :", temp_diff[-1]
+        print "comm_auth :", comm_auth_prop[-1]
+
+# convert list of lists into array
+# documents as rows, unique words as columns (i.e., example as rows, features as columns)
+training_features = np.array([overlap_title, temp_diff, comm_auth, comm_auth_prop, overlap_journal, WMD_abstract, WMD_title]).T
+
+# NB: WMD could return inf, we treat this case to 0.0
+training_features[np.isinf(training_features)] = 0.0
+
+# scale
+#training_features = np.nan_to_num(training_features)
+training_features = preprocessing.scale(training_features)
+
+# convert labels into integers then into column array
+labels = [int(element[2]) for element in training_set_reduced]
+labels = list(labels)
+labels_array = np.array(labels)
+
+trainset = pd.DataFrame(data = training_features, columns=["overlap_title", "temp_diff", "comm_auth", "comm_auth_prop", "overlap_journal", "WMD_abstract", "WMD_title"])
+trainset['label'] = labels_array
+trainset.to_csv('data/trainset_full.csv')
