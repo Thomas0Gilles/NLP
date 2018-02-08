@@ -4,7 +4,7 @@ from sklearn.svm import SVC
 import json
 
 #%%
-train = pd.read_csv('data/trainset_full.csv', index_col=0)
+train = pd.read_csv('../data/trainset_full.csv', index_col=0)
 labels = train['label']
 train = train.drop(['label'], axis=1)
 
@@ -34,7 +34,7 @@ del train
 del labels
 
 #%%
-test = pd.read_csv('data/testset_full.csv', index_col=0)
+test = pd.read_csv('../data/testset_full.csv', index_col=0)
 test = test.fillna(0)
 test = test.values
 
