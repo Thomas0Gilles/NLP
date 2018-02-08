@@ -1,7 +1,0 @@
-﻿TODO:
--> Faire fonctionner NNKeras
-
-Objectifs:
--> FeatureEngineeringUser: trouver d'autres features
--> FeatureEngineering: trouver d'autres features
--> NNKeras: debug et optimisation de la grid
