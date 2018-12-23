@@ -1,2 +1,2 @@
 # NLP
-Kaggle Challenge
+Kaggle Challenge : Predicting missing links in citation network of scientific papers.
